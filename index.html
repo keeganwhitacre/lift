@@ -179,7 +179,7 @@
     /* ── FILTER CHIPS ── */
     .filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; flex-wrap: nowrap; }
     .filter-scroll::-webkit-scrollbar { display: none; }
-    .chip { padding: 6px 16px; background: var(--bg-surface); border-radius: 16px; font-size: 14px; font-weight: 600; color: var(--text-2); white-space: nowrap; cursor: pointer; border: 0.5px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.15s; flex-shrink: 0; }
+    .chip { padding: 6px 16px; background: var(--bg-surface); border-radius: 100px; font-size: 14px; font-weight: 600; color: var(--text-2); white-space: nowrap; cursor: pointer; border: 0.5px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.15s; flex-shrink: 0; }
     .chip.active { background: var(--text-1); color: var(--bg-canvas); border-color: transparent; }
 
     /* ── OVERLAY & SHEETS ── */
@@ -187,7 +187,7 @@
     .overlay.open { opacity: 1; pointer-events: all; }
     .sheet {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--bg-surface); border-radius: 24px 24px 0 0;
+      background: var(--bg-surface); border-radius: 32px 32px 0 0;
       padding: 24px 24px calc(24px + var(--safe-bottom)); z-index: 200;
       transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2,0.9,0.3,1);
       max-height: 90vh; overflow-y: auto;
@@ -203,30 +203,29 @@
     /* ── INPUT ── */
     .input {
       display: block; width: 100%; max-width: 100%; box-sizing: border-box;
-      padding: 14px 16px; border-radius: 12px; border: 0.5px solid var(--border);
+      padding: 14px 16px; border-radius: 16px; border: 0.5px solid var(--border);
       background: var(--bg-canvas); font-size: 16px; color: var(--text-1); outline: none; margin-bottom: 12px;
       font-family: inherit;
     }
     .input:focus { border-color: var(--accent); }
-    /* FIXED: Allow resizing textareas vertically and give them minimum height */
     textarea.input { resize: vertical; min-height: 120px; }
 
     /* ── SHEET BUTTONS ── */
     .sheet-btn {
-      width: 100%; box-sizing: border-box; padding: 16px; border-radius: 14px;
+      width: 100%; box-sizing: border-box; padding: 16px; border-radius: 100px;
       border: none; font-size: 16px; font-weight: 600; cursor: pointer;
       margin-top: 12px; background: var(--bg-canvas); color: var(--text-1);
       display: flex; align-items: center; justify-content: center; gap: 8px;
       transition: opacity 0.15s; font-family: inherit;
     }
-    .sheet-btn:active { opacity: 0.7; }
+    .sheet-btn:active { opacity: 0.7; transform: scale(0.98); }
     .sheet-btn.primary { background: var(--accent); color: #fff; }
     .sheet-btn.danger  { background: rgba(255,59,48,0.1); color: var(--danger); }
     .sheet-btn.secondary { background: var(--bg-input); border: 0.5px solid var(--border); }
 
     /* s-chip */
     .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-    .s-chip { padding: 8px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; background: var(--bg-canvas); color: var(--text-2); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; }
+    .s-chip { padding: 8px 14px; border-radius: 100px; font-size: 14px; font-weight: 600; background: var(--bg-canvas); color: var(--text-2); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; }
     .s-chip.active { background: var(--text-1); color: var(--bg-surface); border-color: transparent; }
     .s-chip.danger-active { background: rgba(255,59,48,0.1); color: var(--danger); border-color: transparent; }
 
@@ -236,12 +235,12 @@
     .section { margin-bottom: 24px; }
     .sec-header { margin: 20px 0 10px 4px; display: flex; align-items: center; gap: 8px; }
     .sec-title { font-size: 18px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; }
-    .sec-count { font-size: 12px; font-weight: 600; color: var(--text-3); background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 12px; }
+    .sec-count { font-size: 12px; font-weight: 600; color: var(--text-3); background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 100px; }
     [data-theme="dark"] .sec-count { background: rgba(255,255,255,0.08); }
 
     /* ── CARD ── */
     .card {
-      background: var(--bg-surface); border-radius: 16px; padding: 20px;
+      background: var(--bg-surface); border-radius: 24px; padding: 20px;
       margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
       border: 0.5px solid var(--border);
     }
@@ -254,12 +253,12 @@
 
     /* ── SEARCH ── */
     .search-wrap { margin-bottom: 16px; }
-    .search-input { width: 100%; padding: 12px 16px; border-radius: 12px; border: none; background: var(--bg-surface); color: var(--text-1); font-size: 16px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-family: inherit; }
+    .search-input { width: 100%; padding: 12px 16px; border-radius: 100px; border: none; background: var(--bg-surface); color: var(--text-1); font-size: 16px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-family: inherit; }
     .search-input::placeholder { color: var(--text-3); }
 
     /* ── WEEK TRACKER DOTS ── */
     .day-dot {
-      width: 28px; height: 36px; border-radius: 10px;
+      width: 28px; height: 36px; border-radius: 100px;
       display: flex; align-items: center; justify-content: center;
       background: var(--bg-input); color: var(--text-4); font-size: 12px; font-weight: 700;
     }
@@ -330,9 +329,10 @@
     .col-val { width: 68px; text-align: center; }
     .col-check { width: 44px; text-align: center; }
 
+    /* FULL PILL SHAPE ROW */
     .pill-row {
-      display: flex; align-items: center; gap: 8px; padding: 8px 12px 8px 8px;
-      margin: 0 16px 8px; border-radius: 20px;
+      display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px;
+      margin: 0 16px 8px; border-radius: 100px;
       background: var(--bg-surface); border: 0.5px solid var(--border);
       box-shadow: 0 2px 8px rgba(0,0,0,0.02);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -352,22 +352,23 @@
     }
     .pill-row.done .set-idx-badge { background: transparent; color: var(--success); }
 
+    /* FULL CIRCLE BADGE */
     .set-idx-badge {
-      width: 32px; height: 32px; border-radius: 12px; background: var(--bg-input);
+      width: 34px; height: 34px; border-radius: 50%; background: var(--bg-input);
       display: flex; align-items: center; justify-content: center;
       font-size: 14px; font-weight: 800; color: var(--text-2); font-family: ui-monospace, monospace;
     }
     
     .set-prev-tag {
       display: inline-flex; justify-content: center; align-items: center;
-      padding: 6px 10px; border-radius: 8px; background: var(--bg-input);
+      padding: 6px 12px; border-radius: 100px; background: var(--bg-input);
       font-size: 13px; color: var(--text-3); font-family: ui-monospace, monospace; font-weight: 600;
       cursor: pointer; transition: 0.15s;
     }
     .set-prev-tag:active { background: var(--border-md); transform: scale(0.95); }
 
     .set-input {
-      width: 68px; height: 44px; border-radius: 12px; background: var(--bg-input);
+      width: 68px; height: 44px; border-radius: 100px; background: var(--bg-input);
       border: 1.5px solid transparent; text-align: center; font-size: 18px; font-weight: 700;
       color: var(--text-1); outline: none; font-family: ui-monospace, monospace; transition: all 0.2s ease;
     }
@@ -382,11 +383,11 @@
     .rpe-btn-prm.has-val { color: var(--warning); }
 
     .prm-check {
-      width: 38px; height: 38px; border-radius: 50%; background: var(--bg-input);
+      width: 36px; height: 36px; border-radius: 50%; background: var(--bg-input);
       display: flex; align-items: center; justify-content: center;
       color: var(--text-4); cursor: pointer; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .prm-check svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; transition: all 0.2s; }
+    .prm-check svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 3.5; stroke-linecap: round; transition: all 0.2s; }
     
     .pill-row.done .prm-check { 
       background: var(--success); color: white; transform: scale(1.1); 
@@ -395,20 +396,38 @@
     .pill-row.done .prm-check svg { transform: scale(1.1); }
 
     .add-set-btn-pill {
-      display: block; width: calc(100% - 32px); margin: 4px 16px 0; padding: 14px; border-radius: 18px;
+      display: block; width: calc(100% - 32px); margin: 8px 16px 0; padding: 14px; border-radius: 100px;
       background: transparent; border: 1.5px dashed var(--border-md);
       color: var(--text-3); font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.15s;
     }
     .add-set-btn-pill:active { background: var(--bg-input); transform: scale(0.98); }
 
+    /* TOOL BAR BUTTONS */
+    .tool-pill-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px; border-radius: 100px; border: 0.5px solid var(--border);
+      background: var(--bg-surface); color: var(--text-2); font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .tool-pill-btn:active { transform: scale(0.96); background: var(--bg-input); }
+    .tool-pill-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+
     .page-add-btn { 
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: calc(100% - 32px); margin: 32px auto 16px; padding: 18px; 
-      border-radius: 20px; border: none; background: var(--accent-faded); 
+      width: calc(100% - 32px); margin: 0 auto 16px; padding: 18px; 
+      border-radius: 100px; border: none; background: var(--accent-faded); 
       color: var(--accent); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.15s; 
     }
     .page-add-btn:active { transform: scale(0.96); }
     .page-add-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+
+    .page-danger-btn { 
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: calc(100% - 32px); margin: 0 auto 32px; padding: 18px; 
+      border-radius: 100px; border: none; background: rgba(255,59,48,0.1); 
+      color: var(--danger); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.15s; 
+    }
+    .page-danger-btn:active { transform: scale(0.96); }
 
     /* ── REST TIMER ── */
     #restTimerWrap {
@@ -418,7 +437,7 @@
       width: calc(100% - 40px); max-width: 300px;
       background: rgba(255,255,255,0.72);
       backdrop-filter: blur(28px) saturate(210%); -webkit-backdrop-filter: blur(28px) saturate(210%);
-      border-radius: 20px; padding: 10px 16px;
+      border-radius: 100px; padding: 10px 16px;
       display: flex; align-items: center; justify-content: space-between;
       box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
       border: 1px solid rgba(255,255,255,0.8); z-index: 85;
@@ -433,13 +452,13 @@
     @media (min-width: 768px) {
       #restTimerWrap { bottom: 32px; left: 140px; right: auto; transform: none; width: auto; min-width: 240px; }
     }
-    .rest-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-surface); border: 0.5px solid var(--border); color: var(--text-1); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .rest-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--bg-surface); border: 0.5px solid var(--border); color: var(--text-1); display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .rest-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .rest-time { font-size: 20px; font-weight: 700; font-family: ui-monospace, monospace; color: var(--text-1); letter-spacing: -0.02em; }
-    .rest-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+    .rest-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-left: 2px;}
 
     /* ── TOAST ── */
-    .toast { position: fixed; top: calc(var(--safe-top) + 16px); left: 50%; transform: translateX(-50%); background: var(--text-1); color: var(--bg-canvas); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; opacity: 0; z-index: 999; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
+    .toast { position: fixed; top: calc(var(--safe-top) + 16px); left: 50%; transform: translateX(-50%); background: var(--text-1); color: var(--bg-canvas); padding: 10px 20px; border-radius: 100px; font-size: 14px; font-weight: 600; opacity: 0; z-index: 999; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15);}
 
     /* ── EMPTY STATE ── */
     .empty-state { text-align: center; padding: 48px 20px; color: var(--text-3); }
@@ -449,7 +468,7 @@
 
     /* ── STATS ── */
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-    .stat-tile { background: var(--bg-surface); border-radius: 14px; padding: 16px; border: 0.5px solid var(--border); }
+    .stat-tile { background: var(--bg-surface); border-radius: 24px; padding: 16px; border: 0.5px solid var(--border); }
     .stat-tile-val { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); font-family: ui-monospace, monospace; }
     .stat-tile-label { font-size: 12px; font-weight: 600; color: var(--text-3); margin-top: 2px; }
 
@@ -466,7 +485,7 @@
 
     /* ── AI STREAMING ── */
     .ai-output {
-      background: var(--bg-canvas); border-radius: 12px; padding: 14px 16px;
+      background: var(--bg-canvas); border-radius: 16px; padding: 16px;
       font-size: 14px; color: var(--text-2); line-height: 1.6;
       border: 0.5px solid var(--border); margin-top: 12px;
       white-space: pre-wrap; max-height: 280px; overflow-y: auto;
@@ -478,16 +497,16 @@
     @keyframes blink { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
 
     /* ── PLATE CHIPS ── */
-    .plate-chip { height: 40px; min-width: 40px; padding: 0 8px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; font-family: ui-monospace, monospace; color: #fff; flex-direction: column; gap: 1px; }
+    .plate-chip { height: 40px; min-width: 40px; padding: 0 8px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; font-family: ui-monospace, monospace; color: #fff; flex-direction: column; gap: 1px; }
     .plate-chip .pc-sub { font-size: 9px; font-weight: 600; opacity: 0.75; }
 
     /* ── CSV DROP ZONE ── */
-    .drop-zone { border: 1.5px dashed var(--border-md); border-radius: 12px; padding: 24px 16px; text-align: center; color: var(--text-3); cursor: pointer; transition: 0.2s; }
+    .drop-zone { border: 1.5px dashed var(--border-md); border-radius: 16px; padding: 24px 16px; text-align: center; color: var(--text-3); cursor: pointer; transition: 0.2s; }
     .drop-zone.drag-over { border-color: var(--accent); background: var(--accent-faded); color: var(--accent); }
     .drop-zone input[type="file"] { display: none; }
 
     /* ── SYNC BADGE ── */
-    .sync-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 8px; color: var(--text-3); background: var(--bg-input); }
+    .sync-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 100px; color: var(--text-3); background: var(--bg-input); }
     .sync-badge.synced { color: var(--success); background: var(--success-faded); }
     .sync-badge.syncing { color: var(--warning); background: rgba(255,149,0,0.1); }
     .sync-badge.error { color: var(--danger); background: rgba(255,59,48,0.1); }
@@ -502,7 +521,7 @@
     .routine-ex-name { flex: 1; font-size: 15px; font-weight: 500; color: var(--text-1); }
 
     /* ── THEME SWATCHES (Settings) ── */
-    .theme-swatch { width: 60px; height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid var(--border); transition: border-color 0.15s; }
+    .theme-swatch { width: 60px; height: 40px; border-radius: 12px; cursor: pointer; border: 2px solid var(--border); transition: border-color 0.15s; }
     .theme-swatch.active { border-color: var(--accent); }
   </style>
 </head>
@@ -552,7 +571,7 @@
       <div class="content-centerer">
 
         <!-- Start empty -->
-        <button id="startEmptyBtn" style="width:100%; padding:20px; border-radius:16px; border:none; background:var(--text-1); color:var(--bg-canvas); font-size:17px; font-weight:700; letter-spacing:-0.02em; cursor:pointer; margin-bottom:24px; font-family:inherit;">
+        <button id="startEmptyBtn" style="width:100%; padding:20px; border-radius:100px; border:none; background:var(--text-1); color:var(--bg-canvas); font-size:17px; font-weight:700; letter-spacing:-0.02em; cursor:pointer; margin-bottom:24px; font-family:inherit; transition: 0.15s;">
           Start Empty Workout
         </button>
 
@@ -575,7 +594,7 @@
     <div class="premium-header">
       <div class="timer-wrap">
         <div class="timer-text" id="awTime">00:00</div>
-        <div id="wakeLockBadge" style="display:none; font-size:11px; font-weight:600; color:var(--text-4); background:var(--bg-input); padding:2px 8px; border-radius:8px;">screen on</div>
+        <div id="wakeLockBadge" style="display:none; font-size:11px; font-weight:600; color:var(--text-4); background:var(--bg-input); padding:2px 8px; border-radius:100px;">screen on</div>
       </div>
       <button class="finish-btn" id="awFinishBtn">Finish</button>
     </div>
@@ -583,6 +602,19 @@
       <div class="content-centerer">
         <input class="title-input" id="awTitleInput" type="text" value="Evening Workout">
         <div id="awList"></div>
+        
+        <!-- NEW TOOLS ROW -->
+        <div style="display:flex; gap:12px; margin: 24px 16px 16px;">
+          <button class="tool-pill-btn" id="awPlateCalcBtn">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            Plate Calc
+          </button>
+          <button class="tool-pill-btn" id="awInWorkoutNoteBtn">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Workout Note
+          </button>
+        </div>
+
         <button class="page-add-btn" id="awAddExBtn">
           <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Add Exercise
@@ -614,11 +646,11 @@
         </div>
         <div style="display:flex; gap:4px; align-items:center; margin-top:10px;">
           <span style="font-size:10px; color:var(--text-4);">Less</span>
-          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell"></div>
-          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l1"></div>
-          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l2"></div>
-          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l3"></div>
-          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l4"></div>
+          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell"></div>
+          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l1"></div>
+          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l2"></div>
+          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l3"></div>
+          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l4"></div>
           <span style="font-size:10px; color:var(--text-4);">More</span>
         </div>
       </div>
@@ -627,7 +659,7 @@
       <div class="card" style="cursor:default; margin-bottom:12px;">
         <div class="card-label">
           Estimated 1RM
-          <select id="rm1Select" style="background:var(--bg-input); border:none; color:var(--text-2); font-size:11px; font-weight:600; border-radius:6px; padding:2px 6px; cursor:pointer; outline:none; font-family:inherit;"></select>
+          <select id="rm1Select" style="background:var(--bg-input); border:none; color:var(--text-2); font-size:11px; font-weight:600; border-radius:100px; padding:4px 8px; cursor:pointer; outline:none; font-family:inherit; max-width: 150px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"></select>
         </div>
         <div class="rm-chart" id="rm1Chart"></div>
         <div style="font-size:11px; color:var(--text-4); margin-top:6px;">Epley: w × (1 + r/30)</div>
@@ -696,13 +728,13 @@
     <div style="font-size:20px; font-weight:700; margin-bottom:6px;">Finish Workout?</div>
     <div style="font-size:14px; color:var(--text-3);" id="finishSummary">Summary will appear here.</div>
   </div>
-  <div id="saveAsRoutineWrap" style="background:var(--bg-canvas); border-radius:12px; border:0.5px solid var(--border); padding:14px 16px; margin-bottom:4px; display:none;">
+  <div id="saveAsRoutineWrap" style="background:var(--bg-canvas); border-radius:16px; border:0.5px solid var(--border); padding:16px 20px; margin-bottom:4px; display:none;">
     <div style="font-size:13px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">Save as Routine</div>
     <input class="input" id="saveAsRoutineNameInput" type="text" placeholder="Routine name…" style="margin-bottom:0;">
   </div>
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; padding:4px 0;">
-    <input type="checkbox" id="saveAsRoutineCheck" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;">
-    <label for="saveAsRoutineCheck" style="font-size:14px; font-weight:500; color:var(--text-2); cursor:pointer;">Save as new routine</label>
+    <input type="checkbox" id="saveAsRoutineCheck" style="width:20px;height:20px;accent-color:var(--accent);cursor:pointer;border-radius:100px;">
+    <label for="saveAsRoutineCheck" style="font-size:15px; font-weight:500; color:var(--text-2); cursor:pointer;">Save as new routine</label>
   </div>
   <!-- Workout Notes added to confirm finish for convenience -->
   <button class="sheet-btn secondary" id="awNoteTriggerBtn" style="margin-top:12px; margin-bottom:12px;">Add Workout Note</button>
@@ -766,8 +798,8 @@
     <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
   </div>
   <div style="display:flex; gap:8px; margin-bottom:12px;">
-    <input class="input" id="plateTargetInput" type="number" inputmode="decimal" placeholder="Target weight" style="flex:1; margin:0;">
-    <select class="input" id="plateBarSelect" style="flex:0 0 100px; margin:0;">
+    <input class="input" id="plateTargetInput" type="number" inputmode="decimal" placeholder="Target weight" style="flex:1; margin:0; border-radius: 100px;">
+    <select class="input" id="plateBarSelect" style="flex:0 0 100px; margin:0; border-radius: 100px;">
       <option value="45">45 lb bar</option>
       <option value="35">35 lb bar</option>
       <option value="20">20 kg bar</option>
@@ -777,7 +809,7 @@
   <div id="plateResult"></div>
 </div>
 
-   <!-- ROUTINE EDITOR -->
+<!-- ROUTINE EDITOR -->
 <div class="sheet tall" id="sheetRoutineEditor">
   <div class="handle"></div>
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -794,7 +826,7 @@
   <button class="sheet-btn danger" id="deleteRoutineBtn" style="flex-shrink:0; display:none;">Delete Routine</button>
 </div>
 
-<!-- SELECT EXERCISE -->
+<!-- SELECT EXERCISE (Moved below Routine Editor so stacking context works correctly) -->
 <div class="sheet tall" id="sheetExerciseSelect">
   <div class="handle"></div>
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -825,7 +857,7 @@
   <div id="exWgerPane" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
     <div style="display:flex; gap:8px; margin-bottom:12px;">
       <input class="search-input" id="wgerSearchInput" type="search" placeholder="Search database (e.g. cable)..." style="flex:1;">
-      <button class="sheet-btn primary" id="wgerSearchBtn" style="margin:0; width:auto; padding:0 16px; border-radius:12px; font-size:14px; flex-shrink:0;">Search</button>
+      <button class="sheet-btn primary" id="wgerSearchBtn" style="margin:0; width:auto; padding:0 16px; border-radius:100px; font-size:14px; flex-shrink:0;">Search</button>
     </div>
     <div style="font-size:12px; color:var(--text-4); margin-bottom:8px;">wger.de open-source database — no API key needed.</div>
     <div style="flex:1; overflow-y:auto;" id="wgerResultsList"></div>
@@ -900,9 +932,12 @@
 <!-- WORKOUT NOTE -->
 <div class="sheet" id="sheetWorkoutNote">
   <div class="handle"></div>
-  <div class="sheet-title">Workout Note</div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;">Workout Note</div>
+    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
   <textarea class="input" id="awNoteTA" rows="4" placeholder="Felt strong. Sleep 7h. Pre-workout: black coffee."></textarea>
-  <button class="sheet-btn primary" id="saveNoteBtn">Save</button>
+  <button class="sheet-btn primary" id="saveNoteBtn">Save Note</button>
 </div>
 
 <script>
@@ -1935,6 +1970,12 @@ document.getElementById('awAddExBtn').addEventListener('click', () => {
   openSheet('sheetExerciseSelect');
 });
 
+document.getElementById('awPlateCalcBtn').addEventListener('click', () => openSheet('sheetPlateCalc'));
+document.getElementById('awInWorkoutNoteBtn').addEventListener('click', () => {
+  document.getElementById('awNoteTA').value = AW?.note || '';
+  openSheet('sheetWorkoutNote');
+});
+
 document.getElementById('awTitleInput').addEventListener('input', e => { if (AW) { AW.name = e.target.value; saveAW(); } });
 
 // Cancel / Finish
@@ -1979,7 +2020,9 @@ document.getElementById('saveNoteBtn').addEventListener('click', () => {
   if (AW) { AW.note = document.getElementById('awNoteTA').value; saveAW(); }
   closeSheet('sheetWorkoutNote');
   // Re-open finish sheet after saving note
-  setTimeout(() => openSheet('sheetConfirmFinish'), 350);
+  if (document.body.classList.contains('is-active-workout')) {
+      setTimeout(() => openSheet('sheetConfirmFinish'), 350);
+  }
 });
 
 document.getElementById('confirmFinishYesBtn').addEventListener('click', async () => {
@@ -2276,11 +2319,23 @@ function populate1RMSelect() {
   const prev = sel.value;
   sel.innerHTML = '';
   const counts = {};
-  WORKOUTS.forEach(w => w.exercises.forEach(ex => { counts[ex.exId]=(counts[ex.exId]||0)+1; }));
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  
+  // Find all exercises that have ever been performed in the history
+  WORKOUTS.forEach(w => w.exercises.forEach(ex => { counts[ex.exId]=true; }));
+  
+  // Sort them alphabetically by exercise name
+  const sorted = Object.keys(counts).sort((a,b) => getExName(a).localeCompare(getExName(b)));
+  
   if (!sorted.length) { sel.innerHTML='<option>No data</option>'; return; }
-  sorted.forEach(([id])=>{ const o=document.createElement('option'); o.value=id; o.textContent=getExName(id).replace(/\(.*?\)/g,'').trim(); sel.appendChild(o); });
-  if (prev) sel.value=prev;
+  
+  sorted.forEach(id => { 
+      const o=document.createElement('option'); 
+      o.value=id; 
+      o.textContent=getExName(id).replace(/\(.*?\)/g,'').trim(); 
+      sel.appendChild(o); 
+  });
+  
+  if (prev && counts[prev]) sel.value=prev;
   sel.onchange = render1RMChart;
 }
 
