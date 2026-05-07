@@ -1190,8 +1190,7 @@ function epley(w, r) { return r === 1 ? w : Math.round(w * (1 + r/30)); }
 function normalizeExName(str) {
   if (!str) return '';
   return str.toLowerCase()
-            .replace(/\(.*?\)/g, '')
-            .replace(/[^a-z0-9]/g, '')
+            .replace(/[^a-z0-9]/g, '') // Only strip spaces and special characters
             .trim();
 }
 
