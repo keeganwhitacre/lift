@@ -208,7 +208,10 @@
       font-family: inherit;
     }
     .input:focus { border-color: var(--accent); }
-    textarea.input { resize: none; }
+    textarea.input { 
+        resize: vertical; 
+     min-height: 120px; 
+   }
 
     /* ── SHEET BUTTONS — identical to Tasks ── */
     .sheet-btn {
@@ -1662,22 +1665,31 @@ async function wgerSearch() {
   list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-4);font-size:14px;">Searching...</div>';
 
   try {
-      const url = `https://wger.de/api/v2/exerciseinfo/?search=${encodeURIComponent(q)}&language=2&format=json`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const suggestions = data.results || [];
+    const url = `https://wger.de/api/v2/exerciseinfo/?search=${encodeURIComponent(q)}&format=json`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    
+    const results = data.results || [];
 
-    if (!suggestions.length) {
+    if (!results.length) {
       list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-4);font-size:14px;">No results. Try a different term.</div>';
       return;
     }
 
     list.innerHTML = '';
-    suggestions.forEach(s => {
-      const d = s.data || s;
-      const name = d.name || s.value || 'Unknown';
-      const cat = d.category?.name || '';
+    results.forEach(ex => {
+      // Wger exerciseinfo stores the name in a translations array. (Language 2 is English).
+      const enTranslation = (ex.translations || []).find(t => t.language === 2) || (ex.translations || [])[0];
+      const name = enTranslation?.name || ex.name || 'Unknown';
+      
+      const cat = ex.category?.name || '';
+      
+      // Match category name to local muscle group schema
+      const WGER_CAT_MAP = {
+        'Abs': 'Core', 'Arms': 'Arms', 'Back': 'Back', 'Calves': 'Legs',
+        'Chest': 'Chest', 'Legs': 'Legs', 'Shoulders': 'Shoulders',
+      };
       const part = WGER_CAT_MAP[cat] || 'Other';
 
       const row = document.createElement('div');
@@ -1685,7 +1697,7 @@ async function wgerSearch() {
       row.innerHTML = `
         <div>
           <div style="font-size:15px; font-weight:600; color:var(--text-1);">${name}</div>
-          <div style="font-size:12px; color:var(--text-3); margin-top:2px;">${part}${cat && cat !== part ? ' · wger' : ' · wger'}</div>
+          <div style="font-size:12px; color:var(--text-3); margin-top:2px;">${part}${cat && cat !== part ? ' · ' + cat : ''}</div>
         </div>
         <div style="color:var(--accent); width:20px; height:20px; flex-shrink:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
       `;
