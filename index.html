@@ -656,7 +656,45 @@
   </div>
   <div class="scroll-container">
     <div class="content-centerer">
-      <div class="stat-grid" id="statGrid"></div>
+      
+      <!-- Streaks Card -->
+      <div class="card" style="cursor:default; margin-bottom:12px; display:flex; justify-content:space-around; text-align:center;">
+        <div>
+          <div class="stat-tile-val" id="stkCurrent" style="font-size:28px;">0</div>
+          <div class="stat-tile-label" style="font-size:11px;">Current Streak (Wks)</div>
+        </div>
+        <div style="width:1px; background:var(--border);"></div>
+        <div>
+          <div class="stat-tile-val" id="stkMax" style="font-size:28px;">0</div>
+          <div class="stat-tile-label" style="font-size:11px;">All-Time Best (Wks)</div>
+        </div>
+      </div>
+
+      <div class="stat-grid" id="statGrid" style="grid-template-columns: 1fr 1fr 1fr; gap:8px;"></div>
+
+      <!-- All-Time Bests Card -->
+      <div class="card" style="cursor:default; margin-bottom:12px;">
+        <div class="card-label">
+          All-Time Bests
+          <button id="addBestBtn" style="background:none; border:none; color:var(--accent); font-weight:600; font-size:13px; cursor:pointer; font-family:inherit;">+ Add</button>
+        </div>
+        <div id="bestsList"></div>
+      </div>
+
+      <!-- History Chart -->
+      <div class="card" style="cursor:default; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <button id="chartExBtn" style="background:var(--bg-input); border:none; color:var(--text-1); font-size:14px; font-weight:600; border-radius:8px; padding:6px 10px; cursor:pointer; outline:none; display:flex; align-items:center; gap:4px; max-width:60%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            Select Exercise <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5; flex-shrink:0;"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="chip-row" style="margin-bottom:0; gap:4px;">
+            <div class="s-chip active" id="chartToggle1RM" style="padding:4px 10px; font-size:12px;">1RM</div>
+            <div class="s-chip" id="chartToggleVol" style="padding:4px 10px; font-size:12px;">Volume</div>
+          </div>
+        </div>
+        <div class="rm-chart" id="rm1Chart"></div>
+        <div style="font-size:11px; color:var(--text-4); margin-top:6px;" id="chartHint">Epley: w × (1 + r/30)</div>
+      </div>
 
       <!-- Heatmap -->
       <div class="card" style="cursor:default; margin-bottom:12px;">
@@ -677,16 +715,6 @@
           <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l4"></div>
           <span style="font-size:10px; color:var(--text-4);">More</span>
         </div>
-      </div>
-
-      <!-- 1RM chart -->
-      <div class="card" style="cursor:default; margin-bottom:12px;">
-        <div class="card-label">
-          Estimated 1RM
-          <select id="rm1Select" style="background:var(--bg-input); border:none; color:var(--text-2); font-size:11px; font-weight:600; border-radius:6px; padding:2px 6px; cursor:pointer; outline:none; font-family:inherit;"></select>
-        </div>
-        <div class="rm-chart" id="rm1Chart"></div>
-        <div style="font-size:11px; color:var(--text-4); margin-top:6px;">Epley: w × (1 + r/30)</div>
       </div>
 
       <!-- AI weekly report -->
@@ -962,7 +990,7 @@
   </div>
   <p style="color:var(--text-2); margin-bottom:16px; font-size:14px; line-height:1.5;">Describe constraints. Coach prescribes — no filler.</p>
   <textarea class="input" id="coachRequestTA" rows="3" placeholder="30 min, dumbbells only, lower back is sore."></textarea>
-  <button class="sheet-btn primary" id="btnGenerateRoutine">Generate</button>
+  <button class="sheet-btn primary" id="btnGenerateRoutine">Generate Workout</button>
   <div class="ai-output" id="routineOutput" style="display:none;"></div>
 </div>
 
@@ -986,8 +1014,12 @@
     <div class="s-chip" id="unitKg"  data-unit="kg">kg</div>
   </div>
 
-  <div class="sheet-label">Default Rest (seconds)</div>
-  <input class="input" id="restDurInput" type="number" inputmode="numeric" placeholder="90">
+  <div class="sheet-label">Rest Timer</div>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+    <input type="checkbox" id="autoRestCheck" style="width:20px;height:20px;accent-color:var(--accent);">
+    <label for="autoRestCheck" style="font-size:15px; color:var(--text-1);">Start automatically after a set</label>
+  </div>
+  <input class="input" id="restDurInput" type="number" inputmode="numeric" placeholder="Default duration (sec) e.g. 90">
   
   <button class="sheet-btn secondary" id="btnManageCustomEx" style="margin-top:12px;">Manage Custom Exercises</button>
 
@@ -1020,7 +1052,10 @@
   <button class="sheet-btn secondary" id="btnRequestNotif" style="margin-top:0; font-size:14px; text-align:left; justify-content:flex-start;">Enable rest timer notifications</button>
   <div style="font-size:12px; color:var(--text-3); margin-top:4px; margin-bottom:4px;" id="notifStatus"></div>
 
-  <button class="sheet-btn danger" id="btnClearData" style="margin-top:32px;">Clear All Data</button>
+  <div style="margin-top:32px; display:flex; gap:8px;">
+    <button class="sheet-btn secondary" id="btnDownloadBackup" style="flex:1; margin-top:0;">Download Backup</button>
+    <button class="sheet-btn danger" id="btnClearData" style="flex:1; margin-top:0;">Clear All Data</button>
+  </div>
 </div>
 
 <!-- WORKOUT NOTE -->
@@ -1159,12 +1194,18 @@ let CUSTOM_EX = [];
 
 const CFG_KEY = 'kw_lift_cfg';
 let CFG = {
-  theme: 'light', unit: 'lbs', restDuration: 90,
-  geminiKey: '', rapidApiKey: '', gistPAT: '', gistID: '', athleteProfile: ''
+  theme: 'light', unit: 'lbs', restDuration: 90, autoRest: true,
+  geminiKey: '', rapidApiKey: '', gistPAT: '', gistID: '', athleteProfile: '',
+  trackedBests: ['e1', 'e3', 'e5']
 };
 
 function loadCFG() {
-  try { Object.assign(CFG, JSON.parse(localStorage.getItem(CFG_KEY) || '{}')); } catch(e) {}
+  try { 
+    const parsed = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+    Object.assign(CFG, parsed); 
+    if (CFG.autoRest === undefined) CFG.autoRest = true;
+    if (!CFG.trackedBests || !CFG.trackedBests.length) CFG.trackedBests = ['e1', 'e3', 'e5'];
+  } catch(e) {}
 }
 function saveCFG() { localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }
 
@@ -1323,6 +1364,7 @@ document.getElementById('settingsBtn').addEventListener('click', () => {
   document.getElementById('gistIDInput').value       = CFG.gistID;
   document.getElementById('unitLbs').classList.toggle('active', CFG.unit === 'lbs');
   document.getElementById('unitKg').classList.toggle('active',  CFG.unit === 'kg');
+  document.getElementById('autoRestCheck').checked   = CFG.autoRest;
   document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.theme === CFG.theme));
   updateNotifStatus();
   openSheet('sheetSettings');
@@ -1349,6 +1391,7 @@ document.getElementById('restDurInput').addEventListener('change', e => { CFG.re
 document.getElementById('geminiKeyInput').addEventListener('change', e => { CFG.geminiKey = e.target.value.trim(); saveCFG(); });
 document.getElementById('rapidApiKeyInput').addEventListener('change', e => { CFG.rapidApiKey = e.target.value.trim(); saveCFG(); });
 document.getElementById('athleteProfileInput').addEventListener('change', e => { CFG.athleteProfile = e.target.value.trim(); saveCFG(); });
+document.getElementById('autoRestCheck').addEventListener('change', e => { CFG.autoRest = e.target.checked; saveCFG(); });
 
 function updateNotifStatus() {
   const el = document.getElementById('notifStatus');
@@ -1375,6 +1418,21 @@ document.getElementById('btnRequestNotif').addEventListener('click', async () =>
   const result = await Notification.requestPermission();
   updateNotifStatus();
   if (result === 'granted') showToast('Notifications enabled');
+});
+
+// Download Backup functionality
+document.getElementById('btnDownloadBackup').addEventListener('click', () => {
+  const payload = { workouts: WORKOUTS, routines: ROUTINES, customEx: CUSTOM_EX, unit: CFG.unit };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lift_backup_${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Backup downloaded');
 });
 
 let clearTimer;
@@ -1811,7 +1869,7 @@ document.getElementById('deleteRoutineBtn').addEventListener('click', async () =
    EXERCISE SELECT SHEET
 ══════════════════════════════════════════════════════════════════ */
 let _exFilter = 'All';
-let _exSelectMode = 'workout'; // 'workout' | 'routine' | 'swap'
+let _exSelectMode = 'workout'; // 'workout' | 'routine' | 'swap' | 'statsChart' | 'trackBest'
 
 document.getElementById('exFilterRow').addEventListener('click', e => {
   const chip = e.target.closest('.chip');
@@ -1856,6 +1914,15 @@ function renderExSelect() {
         renderRoutineExList();
         closeSheet('sheetExerciseSelect');
         document.getElementById('exSearchInput').value = '';
+      } else if (_exSelectMode === 'statsChart') {
+        _chartExId = e.id;
+        updateChartExBtn(); render1RMChart(); closeSheets();
+      } else if (_exSelectMode === 'trackBest') {
+        if (!CFG.trackedBests.includes(e.id)) {
+          CFG.trackedBests.push(e.id);
+          saveCFG(); renderAllTimeBests();
+        }
+        closeSheets();
       }
     });
     list.appendChild(row);
@@ -1947,8 +2014,12 @@ function addApiExercise(name, part) {
     saveAW(); renderAWList(); closeSheets();
   } else if (_exSelectMode === 'routine') {
     _editingRoutineExercises.push({ exId: ex.id, sets: 3 });
-    renderRoutineExList();
-    closeSheet('sheetExerciseSelect');
+    renderRoutineExList(); closeSheet('sheetExerciseSelect');
+  } else if (_exSelectMode === 'statsChart') {
+    _chartExId = ex.id; updateChartExBtn(); render1RMChart(); closeSheets();
+  } else if (_exSelectMode === 'trackBest') {
+    if (!CFG.trackedBests.includes(ex.id)) { CFG.trackedBests.push(ex.id); saveCFG(); renderAllTimeBests(); }
+    closeSheets();
   }
   document.getElementById('apiSearchInput').value = '';
 }
@@ -1971,8 +2042,12 @@ document.getElementById('createCustomExBtn').addEventListener('click', () => {
     saveAW(); renderAWList(); closeSheets();
   } else if (_exSelectMode === 'routine') {
     _editingRoutineExercises.push({ exId: ex.id, sets: 3 });
-    renderRoutineExList();
-    closeSheet('sheetExerciseSelect');
+    renderRoutineExList(); closeSheet('sheetExerciseSelect');
+  } else if (_exSelectMode === 'statsChart') {
+    _chartExId = ex.id; updateChartExBtn(); render1RMChart(); closeSheets();
+  } else if (_exSelectMode === 'trackBest') {
+    if (!CFG.trackedBests.includes(ex.id)) { CFG.trackedBests.push(ex.id); saveCFG(); renderAllTimeBests(); }
+    closeSheets();
   }
 });
 
@@ -2100,10 +2175,8 @@ function renderAWList() {
     if (exIdx > 0) {
       hd.querySelector('.link-btn').addEventListener('click', () => {
         if (isLinkedUp) {
-          // Unlink
           ex.supersetId = null;
         } else {
-          // Link to previous
           if (!prevEx.supersetId) prevEx.supersetId = uid();
           ex.supersetId = prevEx.supersetId;
         }
@@ -2198,7 +2271,7 @@ function renderAWList() {
       chk.addEventListener('click', () => {
         set.done = !set.done;
         saveAW(); 
-        if (set.done) {
+        if (set.done && CFG.autoRest !== false) {
           startRestTimer();
         }
         renderAWList();
@@ -2246,11 +2319,10 @@ function renderReorderList() {
       btn.addEventListener('click', () => {
         if (btn.disabled) return;
         const dir = parseInt(btn.dataset.dir);
-        // Swap array elements
         [AW.exercises[i], AW.exercises[i+dir]] = [AW.exercises[i+dir], AW.exercises[i]];
         saveAW();
-        renderReorderList(); // Re-render this sheet
-        renderAWList();      // Re-render main view
+        renderReorderList();
+        renderAWList(); 
       });
     });
     
@@ -2541,6 +2613,67 @@ async function callGemini(prompt, outputEl) {
   } catch(e) { outputEl.textContent = 'Error: ' + e.message; }
 }
 
+async function generateRoutineAI(req) {
+  const key = CFG.geminiKey;
+  if (!key) { showToast('Add Gemini API key in settings'); return; }
+  const out = document.getElementById('routineOutput');
+  out.style.display = 'block';
+  out.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>';
+  
+  const schema = {
+    type: "OBJECT",
+    properties: {
+      routineName: { type: "STRING" },
+      exercises: { type: "ARRAY", items: { type: "OBJECT", properties: { name: { type: "STRING" }, sets: { type: "INTEGER" } } } },
+      coachNotes: { type: "STRING" }
+    }
+  };
+  const prompt = `Generate a workout routine perfectly tailored to these constraints: ${req}. Keep it completely focused on what matters. Use standard exercise names.`;
+  const history = buildMinifiedHistory();
+  const profile = CFG.athleteProfile ? `\n\n## Athlete Profile\n${CFG.athleteProfile}` : '';
+  const fullContext = `${profile}\n\n## Training History\n${history}\n\nUnit: ${CFG.unit}\n\n## Request\n${prompt}`;
+  
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents:[{ parts:[{text:fullContext}] }],
+        systemInstruction: { parts: [{text: COACH_SYS}] },
+        generationConfig: { responseMimeType: "application/json", responseSchema: schema }
+      })
+    });
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const data = await res.json();
+    const parsed = JSON.parse(data.candidates[0].content.parts[0].text);
+    
+    // Map AI exercises to DB (creates custom ones if necessary)
+    const exercises = parsed.exercises.map(e => {
+        let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(x => normalizeExName(x.name) === normalizeExName(e.name));
+        if (!ex) {
+            ex = { id: uid(), name: e.name.charAt(0).toUpperCase() + e.name.slice(1), part: 'Other' };
+            CUSTOM_EX.push(ex); if (db) idbPut('customEx', ex);
+        }
+        return { exId: ex.id, sets: e.sets || 3 };
+    });
+    
+    out.innerHTML = `<div style="margin-bottom:12px; font-size:14px;"><strong>Coach Note:</strong> ${parsed.coachNotes}</div>`;
+    
+    // Start workout immediately
+    startWorkout({ name: parsed.routineName || 'AI Generated Workout', exercises });
+    closeSheets();
+    
+    // Switch to workout tab
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-tab="workout"]').classList.add('active');
+    document.body.classList.remove('history-mode','workout-mode','stats-mode');
+    document.body.classList.add('workout-mode');
+    showToast('AI Workout Started');
+    
+  } catch(e) {
+      out.textContent = 'Error building routine: ' + e.message;
+  }
+}
+
 function openExerciseCoach(exId, exName) {
   _coachExId = exId;
   document.getElementById('aiCoachExName').textContent = exName;
@@ -2567,7 +2700,7 @@ document.getElementById('coachActionChips').addEventListener('click', e => {
 document.getElementById('btnGenerateRoutine').addEventListener('click', () => {
   const req = document.getElementById('coachRequestTA').value.trim();
   if (!req) { showToast('Describe your constraints'); return; }
-  callGemini(`Generate a workout routine. Constraints: ${req}. Format: exercise, sets×reps, rest. One line each. No filler.`, document.getElementById('routineOutput'));
+  generateRoutineAI(req);
 });
 
 document.getElementById('btnWeeklyAudit').addEventListener('click', async () => {
@@ -2580,11 +2713,15 @@ document.getElementById('btnWeeklyAudit').addEventListener('click', async () => 
 /* ══════════════════════════════════════════════════════════════════
    STATS
 ══════════════════════════════════════════════════════════════════ */
+let _chartExId = null;
+let _chartMode = 'rm'; // 'rm' or 'vol'
+
 function renderStats() {
   renderStatTiles();
+  renderStreaks();
+  renderAllTimeBests();
   renderHeatmap();
-  populate1RMSelect();
-  render1RMChart();
+  initChart();
 }
 
 function renderStatTiles() {
@@ -2599,7 +2736,6 @@ function renderStatTiles() {
   const fmt = v => v>999 ? (v/1000).toFixed(1)+'k' : v;
   [
     [WORKOUTS.length, 'Total workouts'],
-    [week.length, 'This week'],
     [fmt(weekVol), `Week vol (${CFG.unit})`],
     [fmt(monthVol), `Month vol (${CFG.unit})`],
   ].forEach(([v,l]) => {
@@ -2609,6 +2745,93 @@ function renderStatTiles() {
     grid.appendChild(el);
   });
 }
+
+function renderStreaks() {
+  function getWeekKey(ts) {
+      const d = new Date(ts);
+      const day = (d.getDay() + 6) % 7; 
+      d.setDate(d.getDate() - day);
+      d.setHours(0,0,0,0);
+      return d.getTime();
+  }
+  const weeks = [...new Set(WORKOUTS.map(w => getWeekKey(w.endTime)))].sort((a,b)=>b-a);
+  let currentStreak = 0;
+  let maxStreak = 0;
+  
+  if (weeks.length > 0) {
+      let tempStreak = 1;
+      maxStreak = 1;
+      for (let i = 1; i < weeks.length; i++) {
+          if (weeks[i-1] - weeks[i] === 7 * 86400000) {
+              tempStreak++;
+              if (tempStreak > maxStreak) maxStreak = tempStreak;
+          } else {
+              tempStreak = 1;
+          }
+      }
+      const thisWeek = getWeekKey(Date.now());
+      if (weeks[0] === thisWeek || weeks[0] === thisWeek - 7*86400000) {
+          currentStreak = 1;
+          for (let i = 1; i < weeks.length; i++) {
+              if (weeks[i-1] - weeks[i] === 7 * 86400000) currentStreak++;
+              else break;
+          }
+      }
+  }
+  document.getElementById('stkCurrent').textContent = currentStreak;
+  document.getElementById('stkMax').textContent = maxStreak;
+}
+
+function renderAllTimeBests() {
+  if (!CFG.trackedBests) CFG.trackedBests = ['e1', 'e3', 'e5'];
+  const list = document.getElementById('bestsList');
+  list.innerHTML = '';
+  
+  if (!CFG.trackedBests.length) {
+      list.innerHTML = `<div style="font-size:13px; color:var(--text-4); text-align:center; padding:12px;">No exercises tracked. Tap + Add.</div>`;
+      return;
+  }
+  
+  CFG.trackedBests.forEach(id => {
+      let best = 0;
+      WORKOUTS.forEach(w => {
+          const ex = w.exercises.find(e => e.exId === id);
+          if (ex) {
+              ex.sets.filter(s=>s.done&&s.reps>0&&s.kg>0).forEach(s => {
+                  const rm = epley(s.kg, s.reps);
+                  if (rm > best) best = rm;
+              });
+          }
+      });
+      
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:0.5px solid var(--border);';
+      row.innerHTML = `
+          <div style="font-size:15px; font-weight:600; color:var(--text-1);">${getExName(id)}</div>
+          <div style="display:flex; align-items:center; gap:12px;">
+              <div style="font-size:16px; font-weight:800; font-family:ui-monospace, monospace; color:var(--accent);">${best ? best + ' ' + CFG.unit : '—'}</div>
+              <button class="remove-best-btn" data-id="${id}" style="background:none; border:none; color:var(--text-4); cursor:pointer;"><svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+      `;
+      list.appendChild(row);
+  });
+  
+  document.querySelectorAll('.remove-best-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.dataset.id;
+          CFG.trackedBests = CFG.trackedBests.filter(x => x !== id);
+          saveCFG();
+          renderAllTimeBests();
+      });
+  });
+}
+
+document.getElementById('addBestBtn').addEventListener('click', () => {
+  _exSelectMode = 'trackBest';
+  document.getElementById('exSearchInput').value = '';
+  renderExSelect();
+  openSheet('sheetExerciseSelect');
+});
 
 function renderHeatmap() {
   const grid = document.getElementById('heatmapGrid');
@@ -2635,46 +2858,78 @@ function renderHeatmap() {
   }
 }
 
-function populate1RMSelect() {
-  const sel = document.getElementById('rm1Select');
-  const prev = sel.value;
-  sel.innerHTML = '';
-  const counts = {};
-  WORKOUTS.forEach(w => w.exercises.forEach(ex => { counts[ex.exId]=(counts[ex.exId]||0)+1; }));
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
-  if (!sorted.length) { sel.innerHTML='<option>No data</option>'; return; }
-  sorted.forEach(([id])=>{ const o=document.createElement('option'); o.value=id; o.textContent=getExName(id).replace(/\(.*?\)/g,'').trim(); sel.appendChild(o); });
-  if (prev) sel.value=prev;
-  sel.onchange = render1RMChart;
+// Chart Handlers
+function initChart() {
+  if (!_chartExId) {
+     const counts = {};
+     WORKOUTS.forEach(w => w.exercises.forEach(ex => { counts[ex.exId]=(counts[ex.exId]||0)+1; }));
+     const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+     if (sorted.length) _chartExId = sorted[0][0];
+  }
+  updateChartExBtn();
+  render1RMChart();
 }
 
+function updateChartExBtn() {
+  const btn = document.getElementById('chartExBtn');
+  btn.innerHTML = `${_chartExId ? getExName(_chartExId) : 'Select Exercise'} <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5; flex-shrink:0;"><polyline points="6 9 12 15 18 9"/></svg>`;
+}
+
+document.getElementById('chartExBtn').addEventListener('click', () => {
+  _exSelectMode = 'statsChart';
+  document.getElementById('exSearchInput').value = '';
+  renderExSelect();
+  openSheet('sheetExerciseSelect');
+});
+
+document.getElementById('chartToggle1RM').addEventListener('click', () => {
+  _chartMode = 'rm';
+  document.getElementById('chartToggle1RM').classList.add('active');
+  document.getElementById('chartToggleVol').classList.remove('active');
+  document.getElementById('chartHint').textContent = 'Epley: w × (1 + r/30)';
+  render1RMChart();
+});
+
+document.getElementById('chartToggleVol').addEventListener('click', () => {
+  _chartMode = 'vol';
+  document.getElementById('chartToggleVol').classList.add('active');
+  document.getElementById('chartToggle1RM').classList.remove('active');
+  document.getElementById('chartHint').textContent = `Total Volume (${CFG.unit})`;
+  render1RMChart();
+});
+
 function render1RMChart() {
-  const sel  = document.getElementById('rm1Select');
-  const exId = sel.value;
   const con  = document.getElementById('rm1Chart');
   con.innerHTML = '';
-  if (!exId) return;
+  if (!_chartExId) return;
   const pts = [];
   WORKOUTS.forEach(w => {
-    const ex = w.exercises.find(e=>e.exId===exId);
+    const ex = w.exercises.find(e=>e.exId===_chartExId);
     if (!ex) return;
-    let best=0;
-    ex.sets.filter(s=>s.done&&s.reps>0&&s.kg>0).forEach(s=>{ const rm=epley(s.kg,s.reps); if(rm>best)best=rm; });
-    if (best>0) pts.push({t:w.endTime,rm:best});
+    
+    if (_chartMode === 'rm') {
+        let best=0;
+        ex.sets.filter(s=>s.done&&s.reps>0&&s.kg>0).forEach(s=>{ const rm=epley(s.kg,s.reps); if(rm>best)best=rm; });
+        if (best>0) pts.push({t:w.endTime,val:best});
+    } else {
+        let vol=0;
+        ex.sets.filter(s=>s.done).forEach(s=>{ vol+=(s.kg||0)*(s.reps||0); });
+        if (vol>0) pts.push({t:w.endTime,val:vol});
+    }
   });
   pts.sort((a,b)=>a.t-b.t);
-  if (pts.length<2) { con.innerHTML=`<div style="color:var(--text-4);font-size:13px;padding:40px 0;text-align:center;">Need at least 2 sessions</div>`; return; }
-  const minRM=Math.min(...pts.map(p=>p.rm)), maxRM=Math.max(...pts.map(p=>p.rm)), range=maxRM-minRM||1;
+  if (pts.length<2) { con.innerHTML=`<div style="color:var(--text-4);font-size:13px;padding:40px 0;text-align:center;">Need at least 2 sessions to chart</div>`; return; }
+  const minV=Math.min(...pts.map(p=>p.val)), maxV=Math.max(...pts.map(p=>p.val)), range=maxV-minV||1;
   const W=500,H=100,pad=18;
   const xs=pts.map((_,i)=>pad+i*(W-2*pad)/(pts.length-1));
-  const ys=pts.map(p=>H-pad-((p.rm-minRM)/range)*(H-2*pad));
+  const ys=pts.map(p=>H-pad-((p.val-minV)/range)*(H-2*pad));
   const path=xs.map((x,i)=>`${i===0?'M':'L'}${x},${ys[i]}`).join(' ');
   con.innerHTML=`<svg class="rm-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
     <defs><linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--accent)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
     <path d="${path} L${xs[xs.length-1]},${H} L${xs[0]},${H} Z" fill="url(#rg)"/>
     <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     ${xs.map((x,i)=>`<circle cx="${x}" cy="${ys[i]}" r="3" fill="var(--accent)"/>`).join('')}
-    <text x="${xs[xs.length-1]}" y="${ys[ys.length-1]-10}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">${pts[pts.length-1].rm}</text>
+    <text x="${xs[xs.length-1]}" y="${ys[ys.length-1]-10}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">${pts[pts.length-1].val.toLocaleString()}</text>
   </svg>`;
 }
 
