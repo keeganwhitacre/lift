@@ -268,97 +268,140 @@
     .day-dot.done { background: var(--success); color: #fff; }
     .day-dot.today:not(.done) { border: 1.5px solid var(--accent); color: var(--accent); }
 
-    /* ── ACTIVE WORKOUT ── */
-    .active-ex-card {
-      background: var(--bg-surface); border-radius: 16px;
-      margin-bottom: 12px; border: 0.5px solid var(--border);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03); overflow: hidden;
-    }
-    .ex-header {
+    /* ── NEW PREMIUM ACTIVE WORKOUT UI ── */
+    .premium-header {
+      position: sticky; top: 0; z-index: 50;
+      padding: calc(var(--safe-top) + 16px) 20px 16px;
+      background: rgba(242, 242, 247, 0.65);
+      backdrop-filter: blur(40px) saturate(250%); -webkit-backdrop-filter: blur(40px) saturate(250%);
+      border-bottom: 0.5px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 16px; border-bottom: 0.5px solid var(--border);
     }
-    .ex-title { font-size: 16px; font-weight: 700; color: var(--accent); }
+    [data-theme="dark"] .premium-header { background: rgba(0, 0, 0, 0.65); }
+    
+    .timer-wrap { display: flex; align-items: center; gap: 8px; }
+    .timer-text { 
+      font-family: ui-monospace, monospace; color: var(--success); 
+      font-weight: 800; font-size: 20px; letter-spacing: -0.02em;
+    }
+    
+    .finish-btn { 
+      background: var(--accent); color: white; border: none; padding: 8px 22px; 
+      border-radius: 100px; font-weight: 700; font-size: 15px; cursor: pointer; 
+      box-shadow: 0 4px 12px rgba(0,122,255,0.25); transition: all 0.2s; 
+    }
+    .finish-btn:active { transform: scale(0.92); }
 
-    .ex-remove-btn {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: rgba(255,59,48,0.1); color: var(--danger);
+    .title-input { 
+      width: 100%; border: none; background: transparent; 
+      font-size: 34px; font-weight: 800; letter-spacing: -0.04em; 
+      color: var(--text-1); outline: none; padding: 24px 20px 8px; font-family: inherit;
+    }
+
+    .exercise-block { margin-bottom: 32px; }
+
+    .ex-header-floating {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding: 24px 20px 12px;
+    }
+    .ex-title-floating { 
+      font-size: 20px; font-weight: 800; color: var(--text-1); 
+      letter-spacing: -0.02em; line-height: 1.1; 
+    }
+    
+    .ex-actions-floating { display: flex; gap: 10px; }
+    .icon-btn-float {
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+      background: var(--bg-surface); box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 0.5px solid var(--border);
+    }
+    .icon-btn-float:active { transform: scale(0.9); }
+    .icon-btn-float.coach-btn { color: var(--accent); }
+    .icon-btn-float.remove-btn { color: var(--danger); }
+    .icon-btn-float svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+
+    .set-labels {
+      display: flex; align-items: center; padding: 0 24px 8px;
+      font-size: 11px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .col-set { width: 36px; text-align: center; }
+    .col-prev { flex: 1; text-align: center; }
+    .col-val { width: 68px; text-align: center; }
+    .col-check { width: 44px; text-align: center; }
+
+    /* FULL PILL SHAPE ROW */
+    .pill-row {
+      display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px;
+      margin: 0 16px 8px; border-radius: 100px;
+      background: var(--bg-surface); border: 0.5px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .pill-row.is-focused {
+      transform: scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 10;
+      border-color: var(--accent);
+    }
+    .pill-row.done { 
+      background-color: var(--success-faded); border-color: transparent; 
+      transform: scale(1); box-shadow: none; 
+    }
+    .pill-row.done .set-input { 
+      background: transparent; color: var(--success); 
+      font-weight: 800; font-size: 19px; 
+    }
+    .pill-row.done .set-idx-badge { background: transparent; color: var(--success); }
+
+    /* FULL CIRCLE BADGE */
+    .set-idx-badge {
+      width: 34px; height: 34px; border-radius: 50%; background: var(--bg-input);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; border: none; flex-shrink: 0;
+      font-size: 14px; font-weight: 800; color: var(--text-2); font-family: ui-monospace, monospace;
     }
-    .ex-remove-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
-
-    /* Set table */
-    .set-table { width: 100%; border-collapse: collapse; }
-    .set-table thead th {
-      font-size: 11px; font-weight: 600; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.04em;
-      text-align: center; padding: 10px 4px 8px;
+    
+    .set-prev-tag {
+      display: inline-flex; justify-content: center; align-items: center;
+      padding: 6px 12px; border-radius: 100px; background: var(--bg-input);
+      font-size: 13px; color: var(--text-3); font-family: ui-monospace, monospace; font-weight: 600;
+      cursor: pointer; transition: 0.15s;
     }
-    .set-table thead th:first-child { text-align: left; padding-left: 16px; }
-    .set-row { border-top: 0.5px solid var(--border); transition: background-color 0.2s; }
-    .set-row td { padding: 8px 4px; vertical-align: middle; }
-    .set-row td:first-child { padding-left: 16px; }
-    .set-row td:last-child { padding-right: 12px; }
-    .set-row.done { background-color: var(--success-faded); }
-
-    .set-num {
-      font-size: 13px; font-weight: 700; color: var(--text-3);
-      font-family: ui-monospace, monospace; display: flex; align-items: center; gap: 4px;
-    }
-    .set-row.done .set-num { color: var(--success); }
-
-    /* Set tag badges */
-    .set-tag { font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
-    .set-tag.warmup  { background: rgba(90,200,250,0.15); color: #5ac8fa; }
-    .set-tag.failure { background: rgba(255,59,48,0.12); color: var(--danger); }
-    .set-tag.drop    { background: rgba(175,82,222,0.12); color: #af52de; }
-    [data-theme="dark"] .set-tag.warmup { color: #64d2ff; }
-
-    /* Prev cell — tappable to fill */
-    .set-prev-btn {
-      font-size: 12px; color: var(--text-4); font-family: ui-monospace, monospace;
-      background: none; border: none; cursor: pointer; padding: 4px 2px;
-      text-align: center; width: 100%; transition: color 0.15s;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px;
-    }
-    .set-prev-btn:hover, .set-prev-btn:active { color: var(--accent); }
+    .set-prev-tag:active { background: var(--border-md); transform: scale(0.95); }
 
     .set-input {
-      width: 100%; max-width: 60px; margin: 0 auto; padding: 8px 4px;
-      border-radius: 8px; background: var(--bg-input); border: 0.5px solid transparent;
-      color: var(--text-1); font-size: 16px; font-weight: 600; text-align: center;
-      outline: none; font-family: ui-monospace, monospace; transition: 0.2s; display: block;
+      width: 68px; height: 44px; border-radius: 100px; background: var(--bg-input);
+      border: 1.5px solid transparent; text-align: center; font-size: 18px; font-weight: 700;
+      color: var(--text-1); outline: none; font-family: ui-monospace, monospace; transition: all 0.2s ease;
     }
     .set-input:focus { border-color: var(--accent); background: var(--bg-surface); }
-    .set-input::placeholder { color: var(--text-4); font-weight: 500; }
-    .set-row.done .set-input { color: var(--success); }
+    .set-input::placeholder { color: var(--text-4); font-weight: 600; }
 
-    /* RPE button */
-    .rpe-btn {
-      font-size: 12px; font-weight: 700; font-family: ui-monospace, monospace;
-      color: var(--text-4); background: none; border: none; cursor: pointer;
-      padding: 4px; width: 36px; text-align: center;
+    .rpe-btn-prm {
+      width: 32px; height: 44px; border: none; background: transparent;
+      color: var(--text-4); font-size: 14px; font-weight: 800; font-family: ui-monospace, monospace;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-    .rpe-btn.set { color: var(--warning); }
+    .rpe-btn-prm.has-val { color: var(--warning); }
 
-    /* Checkmark */
-    .set-check {
-      width: 32px; height: 32px; margin: 0 auto; border-radius: 8px;
-      background: var(--bg-input); border: 1px solid var(--border-md);
+    .prm-check {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--bg-input);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.15s; color: var(--text-4);
+      color: var(--text-4); cursor: pointer; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .set-check svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; }
-    .set-row.done .set-check { background: var(--success); border-color: transparent; color: #fff; }
+    .prm-check svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 3.5; stroke-linecap: round; transition: all 0.2s; }
+    
+    .pill-row.done .prm-check { 
+      background: var(--success); color: white; transform: scale(1.1); 
+      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4); 
+    }
+    .pill-row.done .prm-check svg { transform: scale(1.1); }
 
-    .add-set-btn {
-      width: 100%; padding: 12px; border-radius: 0; background: transparent;
-      border: none; border-top: 0.5px dashed var(--border-md);
-      color: var(--text-3); font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: background 0.15s; font-family: inherit;
+    .add-set-btn-pill {
+      display: block; width: calc(100% - 32px); margin: 8px 16px 0; padding: 14px; border-radius: 100px;
+      background: transparent; border: 1.5px dashed var(--border-md);
+      color: var(--text-3); font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.15s; font-family: inherit;
     }
-    .add-set-btn:active { background: var(--bg-input); }
+    .add-set-btn-pill:active { background: var(--bg-input); transform: scale(0.98); }
 
     /* ── REST TIMER ── */
     #restTimerWrap {
@@ -521,21 +564,35 @@
 
   <!-- ACTIVE WORKOUT SCREEN -->
   <div id="activeWorkoutScreen">
-    <div class="header content-centerer" style="padding-bottom:16px; border-bottom:0.5px solid var(--border);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div id="awTime" style="font-family:ui-monospace,monospace; color:var(--success); font-weight:700; font-size:18px;">00:00</div>
-          <div id="wakeLockBadge" style="display:none; font-size:11px; font-weight:600; color:var(--text-4); background:var(--bg-input); padding:2px 8px; border-radius:8px;">screen on</div>
-        </div>
-        <button class="sheet-btn primary" id="awFinishBtn" style="margin:0; width:auto; padding:8px 18px; border-radius:12px; font-size:14px;">Finish</button>
+    <div class="premium-header">
+      <div class="timer-wrap">
+        <div class="timer-text" id="awTime">00:00</div>
+        <div id="wakeLockBadge" style="display:none; font-size:11px; font-weight:600; color:var(--text-4); background:var(--bg-input); padding:2px 8px; border-radius:100px;">screen on</div>
       </div>
-      <input class="app-title" id="awTitleInput" type="text" value="Evening Workout" style="border:none; background:transparent; margin:0; outline:none; font-family:inherit; width:100%;">
+      <button class="finish-btn" id="awFinishBtn">Finish</button>
     </div>
-    <div class="scroll-container" style="padding-top:16px; padding-bottom:160px;">
+    <div class="scroll-container" style="padding-top:0; padding-bottom:160px;">
       <div class="content-centerer">
+        <input class="title-input" id="awTitleInput" type="text" value="Evening Workout">
         <div id="awList"></div>
-        <button class="sheet-btn secondary" id="awAddExBtn" style="margin-top:8px; margin-bottom:8px;">+ Add Exercise</button>
-        <button class="danger-text-btn" id="awCancelTriggerBtn">Cancel Workout</button>
+        
+        <!-- Tools Row -->
+        <div style="display:flex; gap:12px; margin: 24px 16px 16px;">
+          <button id="awPlateCalcBtn" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:100px; border:0.5px solid var(--border); background:var(--bg-surface); color:var(--text-2); font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+            Plate Calc
+          </button>
+          <button id="awInWorkoutNoteBtn" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:100px; border:0.5px solid var(--border); background:var(--bg-surface); color:var(--text-2); font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Note
+          </button>
+        </div>
+
+        <button id="awAddExBtn" style="display:flex; align-items:center; justify-content:center; gap:8px; width:calc(100% - 32px); margin:0 auto 16px; padding:18px; border-radius:100px; border:none; background:var(--accent-faded); color:var(--accent); font-size:16px; font-weight:700; cursor:pointer; transition:0.15s; font-family:inherit;">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Exercise
+        </button>
+        <button id="awCancelTriggerBtn" style="display:flex; align-items:center; justify-content:center; width:calc(100% - 32px); margin:0 auto 32px; padding:18px; border-radius:100px; border:none; background:rgba(255,59,48,0.1); color:var(--danger); font-size:16px; font-weight:700; cursor:pointer; transition:0.15s; font-family:inherit;">Cancel Workout</button>
       </div>
     </div>
   </div>
@@ -1845,95 +1902,86 @@ function renderAWList() {
   }
 
   AW.exercises.forEach((ex, exIdx) => {
-    const card = document.createElement('div');
-    card.className = 'active-ex-card';
+    const block = document.createElement('div');
+    block.className = 'exercise-block';
     const exName = getExName(ex.exId);
 
     // Header
     const hd = document.createElement('div');
-    hd.className = 'ex-header';
+    hd.className = 'ex-header-floating';
     hd.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px; min-width:0;">
-        <div class="ex-title" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${exName}</div>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-        <button class="icon-btn coach-btn" style="background:var(--accent-faded); border-color:transparent; color:var(--accent);" title="Coach">
-          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </button>
-        <button class="ex-remove-btn" title="Remove exercise">
-          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
+      <div class="ex-title-floating">${exName}</div>
+      <div class="ex-actions-floating">
+        <button class="icon-btn-float coach-btn" title="Coach"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
+        <button class="icon-btn-float remove-btn" title="Remove exercise"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
     `;
     hd.querySelector('.coach-btn').addEventListener('click', () => openExerciseCoach(ex.exId, exName));
-    hd.querySelector('.ex-remove-btn').addEventListener('click', () => {
+    hd.querySelector('.remove-btn').addEventListener('click', () => {
       AW.exercises.splice(exIdx, 1); saveAW(); renderAWList();
     });
-    card.appendChild(hd);
+    block.appendChild(hd);
 
-    // Table
-    const table = document.createElement('table');
-    table.className = 'set-table';
-    table.innerHTML = `<thead><tr>
-      <th style="text-align:left; padding-left:16px;">Set</th>
-      <th>Prev</th>
-      <th>${CFG.unit}</th>
-      <th>Reps</th>
-      <th>RPE</th>
-      <th><svg width="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></th>
-    </tr></thead><tbody></tbody>`;
-
-    const tbody = table.querySelector('tbody');
+    // Labels
+    const labels = document.createElement('div');
+    labels.className = 'set-labels';
+    labels.innerHTML = `
+      <div class="col-set">Set</div>
+      <div class="col-prev">Prev</div>
+      <div class="col-val">${CFG.unit}</div>
+      <div class="col-val">Reps</div>
+      <div class="col-set">RPE</div>
+      <div class="col-check"><svg width="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    `;
+    block.appendChild(labels);
 
     ex.sets.forEach((set, setIdx) => {
-      const tr = document.createElement('tr');
-      tr.className = `set-row${set.done ? ' done' : ''}`;
+      const row = document.createElement('div');
+      row.className = `pill-row${set.done ? ' done' : ''}`;
 
-      const tagHtml = set.tag === 'warmup'  ? '<span class="set-tag warmup">W</span>'
-                    : set.tag === 'failure' ? '<span class="set-tag failure">F</span>'
-                    : set.tag === 'drop'    ? '<span class="set-tag drop">D</span>'
-                    : '';
+      const tagHtml = set.tag === 'warmup'  ? '<div class="set-idx-badge" style="color:#5ac8fa; background:rgba(90,200,250,0.15);">W</div>'
+                    : set.tag === 'failure' ? '<div class="set-idx-badge" style="color:var(--danger); background:rgba(255,59,48,0.12);">F</div>'
+                    : set.tag === 'drop'    ? '<div class="set-idx-badge" style="color:#af52de; background:rgba(175,82,222,0.12);">D</div>'
+                    : `<div class="set-idx-badge">${setIdx+1}</div>`;
 
       const prev = getPrevSet(ex.exId, setIdx);
-      const prevLabel = prev ? `${prev.kg}×${prev.reps}` : '—';
+      const prevHtml = prev ? `<div class="set-prev-tag" title="Tap to use previous">${prev.kg}×${prev.reps}</div>` : '<div style="color:var(--text-4); font-size:13px;">—</div>';
 
-      tr.innerHTML = `
-        <td>
-          <div class="set-num">
-            ${setIdx+1}
-            ${tagHtml}
-          </div>
-        </td>
-        <td style="text-align:center;">
-          <button class="set-prev-btn" title="Tap to use previous">${prevLabel}</button>
-        </td>
-        <td><input type="number" inputmode="decimal" class="set-input weight-in" value="${set.kg !== '' ? set.kg : ''}" placeholder="—"></td>
-        <td><input type="number" inputmode="numeric" class="set-input reps-in"   value="${set.reps !== '' ? set.reps : ''}" placeholder="—"></td>
-        <td><button class="rpe-btn${set.rpe ? ' set' : ''}">${set.rpe || '—'}</button></td>
-        <td><div class="set-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+      row.innerHTML = `
+        <div class="col-set">${tagHtml}</div>
+        <div class="col-prev">${prevHtml}</div>
+        <input type="number" inputmode="decimal" class="set-input weight-in interactive" value="${set.kg !== '' ? set.kg : ''}" placeholder="—" ${set.done ? 'readonly' : ''}>
+        <input type="number" inputmode="numeric" class="set-input reps-in interactive" value="${set.reps !== '' ? set.reps : ''}" placeholder="—" ${set.done ? 'readonly' : ''}>
+        <button class="rpe-btn-prm${set.rpe ? ' has-val' : ''}">${set.rpe || '—'}</button>
+        <div class="col-check"><div class="prm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
       `;
 
-      const wIn  = tr.querySelector('.weight-in');
-      const rIn  = tr.querySelector('.reps-in');
-      const chk  = tr.querySelector('.set-check');
-      const rpe  = tr.querySelector('.rpe-btn');
-      const prevBtn = tr.querySelector('.set-prev-btn');
-      const numCell = tr.querySelector('.set-num');
+      const wIn  = row.querySelector('.weight-in');
+      const rIn  = row.querySelector('.reps-in');
+      const chk  = row.querySelector('.prm-check');
+      const rpe  = row.querySelector('.rpe-btn-prm');
+      const prevBtn = row.querySelector('.set-prev-tag');
+      const numCell = row.querySelector('.col-set');
 
-      // Auto-fill from prev on tap
-      prevBtn.addEventListener('click', () => {
-        if (!prev) return;
-        set.kg = prev.kg; set.reps = prev.reps;
-        wIn.value = set.kg; rIn.value = set.reps;
-        saveAW();
-      });
+      wIn.addEventListener('focus', () => row.classList.add('is-focused'));
+      wIn.addEventListener('blur', () => row.classList.remove('is-focused'));
+      rIn.addEventListener('focus', () => row.classList.add('is-focused'));
+      rIn.addEventListener('blur', () => row.classList.remove('is-focused'));
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          if (!prev) return;
+          set.kg = prev.kg; set.reps = prev.reps;
+          wIn.value = set.kg; rIn.value = set.reps;
+          saveAW();
+        });
+      }
 
       wIn.addEventListener('input', e => { set.kg   = parseFloat(e.target.value) || ''; saveAW(); });
       rIn.addEventListener('input', e => { set.reps = parseInt(e.target.value)   || ''; saveAW(); });
 
       rpe.addEventListener('click', () => { _rpeSet = { set, exIdx, setIdx }; openRPEPicker(); });
 
-      // Long-press set number for tag
       let tagTimer;
       numCell.addEventListener('touchstart', () => { tagTimer = setTimeout(() => { _tagSet = { set, exIdx, setIdx }; openSheet('sheetSetTag'); }, 500); }, {passive:true});
       numCell.addEventListener('touchend', () => clearTimeout(tagTimer));
@@ -1941,39 +1989,36 @@ function renderAWList() {
 
       chk.addEventListener('click', () => {
         set.done = !set.done;
-        tr.classList.toggle('done', set.done);
+        row.classList.toggle('done', set.done);
         if (set.done) {
+          wIn.setAttribute('readonly', 'true');
+          rIn.setAttribute('readonly', 'true');
           startRestTimer();
-          // Auto-add next set with prefilled values from this completed set
           if (setIdx === ex.sets.length - 1) {
-            // Prefill from this set, not from history — it's the next natural rep
             ex.sets.push({ kg: set.kg, reps: set.reps, done: false, rpe: '', tag: null });
             saveAW(); renderAWList();
             return;
           }
         } else {
-          // Uncheck — update display without re-render
-          chk.parentElement.closest('.set-row').classList.remove('done');
+          wIn.removeAttribute('readonly');
+          rIn.removeAttribute('readonly');
         }
         saveAW();
       });
 
-      tbody.appendChild(tr);
+      block.appendChild(row);
     });
 
-    card.appendChild(table);
-
     const addBtn = document.createElement('button');
-    addBtn.className = 'add-set-btn';
+    addBtn.className = 'add-set-btn-pill';
     addBtn.textContent = '+ Add Set';
     addBtn.addEventListener('click', () => {
       const last = ex.sets[ex.sets.length-1];
-      // Prefill from last set in this session, or from history if first set
       ex.sets.push({ kg: last?.kg ?? '', reps: last?.reps ?? '', done: false, rpe: '', tag: null });
       saveAW(); renderAWList();
     });
-    card.appendChild(addBtn);
-    list.appendChild(card);
+    block.appendChild(addBtn);
+    list.appendChild(block);
   });
 }
 
@@ -1983,31 +2028,18 @@ document.getElementById('awAddExBtn').addEventListener('click', () => {
   openSheet('sheetExerciseSelect');
 });
 
-document.getElementById('awTitleInput').addEventListener('input', e => { if (AW) { AW.name = e.target.value; saveAW(); } });
-
-// Note
-const noteBtn = document.createElement('button');
-noteBtn.className = 'sheet-btn secondary';
-noteBtn.style.cssText = 'margin-top:4px; margin-bottom:4px; font-size:14px;';
-noteBtn.textContent = 'Workout Note';
-noteBtn.addEventListener('click', () => {
+document.getElementById('awPlateCalcBtn').addEventListener('click', () => openSheet('sheetPlateCalc'));
+document.getElementById('awInWorkoutNoteBtn').addEventListener('click', () => {
   document.getElementById('awNoteTA').value = AW?.note || '';
   openSheet('sheetWorkoutNote');
 });
-document.getElementById('awCancelTriggerBtn').before(noteBtn);
+
+document.getElementById('awTitleInput').addEventListener('input', e => { if (AW) { AW.name = e.target.value; saveAW(); } });
 
 document.getElementById('saveNoteBtn').addEventListener('click', () => {
   if (AW) { AW.note = document.getElementById('awNoteTA').value; saveAW(); }
   closeSheets(); showToast('Note saved');
 });
-
-// Plate calc
-const plateBtn = document.createElement('button');
-plateBtn.className = 'sheet-btn secondary';
-plateBtn.style.cssText = 'margin-top:0; margin-bottom:4px; font-size:14px;';
-plateBtn.textContent = 'Plate Calculator';
-plateBtn.addEventListener('click', () => openSheet('sheetPlateCalc'));
-noteBtn.before(plateBtn);
 
 // Cancel / Finish
 document.getElementById('awCancelTriggerBtn').addEventListener('click', () => openSheet('sheetConfirmCancel'));
