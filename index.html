@@ -725,6 +725,25 @@
   <div id="plateResult"></div>
 </div>
 
+
+<!-- ROUTINE EDITOR -->
+<div class="sheet tall" id="sheetRoutineEditor">
+  <div class="handle"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;" id="routineEditorTitle">New Routine</div>
+    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <input class="input" id="routineNameInput" type="text" placeholder="Routine name (e.g. Push Day A)">
+  <div class="sheet-label" style="display:flex; justify-content:space-between; align-items:center;">
+    Exercises
+    <button id="routineAddExBtn" style="background:none; border:none; color:var(--accent); font-weight:600; cursor:pointer; font-family:inherit;">+ Add</button>
+  </div>
+  <div id="routineExList" style="flex:1; overflow-y:auto; min-height:80px;"></div>
+  <button class="sheet-btn primary" id="saveRoutineBtn" style="flex-shrink:0;">Save Routine</button>
+  <button class="sheet-btn danger" id="deleteRoutineBtn" style="flex-shrink:0; display:none;">Delete Routine</button>
+</div>
+
+   
 <!-- SELECT EXERCISE -->
 <div class="sheet tall" id="sheetExerciseSelect">
   <div class="handle"></div>
@@ -761,23 +780,6 @@
     <div style="font-size:12px; color:var(--text-4); margin-bottom:8px;">wger.de open-source exercise database — no API key needed.</div>
     <div style="flex:1; overflow-y:auto;" id="wgerResultsList"></div>
   </div>
-</div>
-
-<!-- ROUTINE EDITOR -->
-<div class="sheet tall" id="sheetRoutineEditor">
-  <div class="handle"></div>
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-    <div class="sheet-title" style="margin:0;" id="routineEditorTitle">New Routine</div>
-    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-  </div>
-  <input class="input" id="routineNameInput" type="text" placeholder="Routine name (e.g. Push Day A)">
-  <div class="sheet-label" style="display:flex; justify-content:space-between; align-items:center;">
-    Exercises
-    <button id="routineAddExBtn" style="background:none; border:none; color:var(--accent); font-weight:600; cursor:pointer; font-family:inherit;">+ Add</button>
-  </div>
-  <div id="routineExList" style="flex:1; overflow-y:auto; min-height:80px;"></div>
-  <button class="sheet-btn primary" id="saveRoutineBtn" style="flex-shrink:0;">Save Routine</button>
-  <button class="sheet-btn danger" id="deleteRoutineBtn" style="flex-shrink:0; display:none;">Delete Routine</button>
 </div>
 
 <!-- ASK COACH (Routine Generator) -->
@@ -1660,11 +1662,11 @@ async function wgerSearch() {
   list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-4);font-size:14px;">Searching...</div>';
 
   try {
-    const url = `https://wger.de/api/v2/exercise/search/?term=${encodeURIComponent(q)}&language=english&format=json`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const suggestions = data.suggestions || [];
+      const url = `https://wger.de/api/v2/exerciseinfo/?search=${encodeURIComponent(q)}&language=2&format=json`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const suggestions = data.results || [];
 
     if (!suggestions.length) {
       list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-4);font-size:14px;">No results. Try a different term.</div>';
@@ -2143,16 +2145,26 @@ function cancelSWNotification() {
   navigator.serviceWorker.controller.postMessage({ type: 'CANCEL_NOTIFICATION' });
 }
 
+let restEndTime = 0;
+
 function startRestTimer() {
-  restTimeRemaining = CFG.restDuration;
+  restEndTime = Date.now() + (CFG.restDuration * 1000);
   restWrap.style.display = 'flex';
   if (restTimerInterval) clearInterval(restTimerInterval);
+  
   updateRestUI();
-  scheduleSWNotification(restTimeRemaining * 1000);
+  scheduleSWNotification(CFG.restDuration * 1000);
+  
   restTimerInterval = setInterval(() => {
-    restTimeRemaining--;
-    if (restTimeRemaining <= 0) stopRestTimer();
-    else updateRestUI();
+    // Calculate remaining time based on the absolute clock
+    restTimeRemaining = Math.ceil((restEndTime - Date.now()) / 1000);
+    
+    if (restTimeRemaining <= 0) {
+        restTimeRemaining = 0; 
+        stopRestTimer();
+    } else {
+        updateRestUI();
+    }
   }, 1000);
 }
 function stopRestTimer() {
@@ -2169,9 +2181,11 @@ function updateRestUI() {
 
 document.getElementById('restCancelBtn').addEventListener('click', stopRestTimer);
 document.getElementById('restAddBtn').addEventListener('click', () => {
-  restTimeRemaining += 30;
+  restEndTime += 30000; // Add 30 seconds to the absolute end time
+  restTimeRemaining = Math.ceil((restEndTime - Date.now()) / 1000);
   updateRestUI();
-  // Re-schedule notification for the new remaining time
+  
+  // Re-schedule notification 
   cancelSWNotification();
   scheduleSWNotification(restTimeRemaining * 1000);
 });
