@@ -31,7 +31,7 @@
 
   <style>
     /* ══════════════════════════════════════════════════════════════════
-       KW APPLE DESIGN SYSTEM
+       KW APPLE DESIGN SYSTEM — matches Tasks/Shelf/Pulse exactly
     ══════════════════════════════════════════════════════════════════ */
     :root {
       --bg-canvas: #f2f2f7;
@@ -49,7 +49,7 @@
       --danger: #ff3b30;
       --warning: #ff9500;
       --success: #34c759;
-      --success-faded: rgba(52, 199, 89, 0.15); /* Slightly boosted for pill rows */
+      --success-faded: rgba(52, 199, 89, 0.1);
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -98,7 +98,7 @@
     body.is-active-workout #workoutDashboard    { display: none; }
     body.is-active-workout #activeWorkoutScreen { display: flex; }
 
-    /* ── GLASS NAV ── */
+    /* ── GLASS NAV — identical to Tasks ── */
     .glass-nav-wrap {
       position: fixed; z-index: 90; pointer-events: none;
       bottom: 23px; left: 0; width: 100%;
@@ -158,7 +158,7 @@
     .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .app-title { font-size: 34px; font-weight: 800; letter-spacing: -0.04em; color: var(--text-1); line-height: 1.1; }
 
-    /* ── ICON BTN ── */
+    /* ── ICON BTN — exactly Tasks ── */
     .icon-btn {
       width: 32px; height: 32px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -169,25 +169,25 @@
     .icon-btn:active { opacity: 0.6; }
     .icon-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
 
-    /* ── SCROLLBARS ── */
+    /* ── SCROLLBARS — identical to Tasks ── */
     .scroll-container, .sheet { scrollbar-width: thin; scrollbar-color: var(--text-4) transparent; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; border-radius: 10px; }
     ::-webkit-scrollbar-thumb { background: var(--text-4); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
 
-    /* ── FILTER CHIPS ── */
+    /* ── FILTER CHIPS — identical to Tasks ── */
     .filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; flex-wrap: nowrap; }
     .filter-scroll::-webkit-scrollbar { display: none; }
-    .chip { padding: 6px 16px; background: var(--bg-surface); border-radius: 100px; font-size: 14px; font-weight: 600; color: var(--text-2); white-space: nowrap; cursor: pointer; border: 0.5px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.15s; flex-shrink: 0; }
+    .chip { padding: 6px 16px; background: var(--bg-surface); border-radius: 16px; font-size: 14px; font-weight: 600; color: var(--text-2); white-space: nowrap; cursor: pointer; border: 0.5px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: all 0.15s; flex-shrink: 0; }
     .chip.active { background: var(--text-1); color: var(--bg-canvas); border-color: transparent; }
 
-    /* ── OVERLAY & SHEETS ── */
+    /* ── OVERLAY & SHEETS — identical to Tasks ── */
     .overlay { position: fixed; inset: 0; background: var(--bg-overlay); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
     .overlay.open { opacity: 1; pointer-events: all; }
     .sheet {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--bg-surface); border-radius: 32px 32px 0 0;
+      background: var(--bg-surface); border-radius: 24px 24px 0 0;
       padding: 24px 24px calc(24px + var(--safe-bottom)); z-index: 200;
       transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.2,0.9,0.3,1);
       max-height: 90vh; overflow-y: auto;
@@ -200,47 +200,50 @@
     .sheet-title { font-size: 20px; font-weight: 700; color: var(--text-1); margin-bottom: 20px; }
     .sheet-label { font-size: 13px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; margin: 20px 0 8px; }
 
-    /* ── INPUT ── */
+    /* ── INPUT — identical to Tasks ── */
     .input {
       display: block; width: 100%; max-width: 100%; box-sizing: border-box;
-      padding: 14px 16px; border-radius: 16px; border: 0.5px solid var(--border);
+      padding: 14px 16px; border-radius: 12px; border: 0.5px solid var(--border);
       background: var(--bg-canvas); font-size: 16px; color: var(--text-1); outline: none; margin-bottom: 12px;
       font-family: inherit;
     }
     .input:focus { border-color: var(--accent); }
-    textarea.input { resize: vertical; min-height: 120px; }
+    textarea.input { 
+        resize: vertical; 
+     min-height: 120px; 
+   }
 
-    /* ── SHEET BUTTONS ── */
+    /* ── SHEET BUTTONS — identical to Tasks ── */
     .sheet-btn {
-      width: 100%; box-sizing: border-box; padding: 16px; border-radius: 100px;
+      width: 100%; box-sizing: border-box; padding: 16px; border-radius: 14px;
       border: none; font-size: 16px; font-weight: 600; cursor: pointer;
       margin-top: 12px; background: var(--bg-canvas); color: var(--text-1);
       display: flex; align-items: center; justify-content: center; gap: 8px;
       transition: opacity 0.15s; font-family: inherit;
     }
-    .sheet-btn:active { opacity: 0.7; transform: scale(0.98); }
+    .sheet-btn:active { opacity: 0.7; }
     .sheet-btn.primary { background: var(--accent); color: #fff; }
     .sheet-btn.danger  { background: rgba(255,59,48,0.1); color: var(--danger); }
     .sheet-btn.secondary { background: var(--bg-input); border: 0.5px solid var(--border); }
 
-    /* s-chip */
+    /* s-chip — identical to Tasks */
     .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-    .s-chip { padding: 8px 14px; border-radius: 100px; font-size: 14px; font-weight: 600; background: var(--bg-canvas); color: var(--text-2); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; }
+    .s-chip { padding: 8px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; background: var(--bg-canvas); color: var(--text-2); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; }
     .s-chip.active { background: var(--text-1); color: var(--bg-surface); border-color: transparent; }
     .s-chip.danger-active { background: rgba(255,59,48,0.1); color: var(--danger); border-color: transparent; }
 
     .danger-text-btn { width: 100%; padding: 16px; background: transparent; border: none; color: var(--danger); font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; }
 
-    /* ── SECTION PATTERN ── */
+    /* ── SECTION PATTERN (mirrors Tasks grouped lists) ── */
     .section { margin-bottom: 24px; }
     .sec-header { margin: 20px 0 10px 4px; display: flex; align-items: center; gap: 8px; }
     .sec-title { font-size: 18px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; }
-    .sec-count { font-size: 12px; font-weight: 600; color: var(--text-3); background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 100px; }
+    .sec-count { font-size: 12px; font-weight: 600; color: var(--text-3); background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 12px; }
     [data-theme="dark"] .sec-count { background: rgba(255,255,255,0.08); }
 
-    /* ── CARD ── */
+    /* ── CARD — matches reflect-card exactly ── */
     .card {
-      background: var(--bg-surface); border-radius: 24px; padding: 20px;
+      background: var(--bg-surface); border-radius: 16px; padding: 20px;
       margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
       border: 0.5px solid var(--border);
     }
@@ -251,183 +254,111 @@
     .card-title { font-size: 18px; font-weight: 700; color: var(--text-1); margin-bottom: 4px; }
     .card-sub { font-size: 14px; color: var(--text-3); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-    /* ── SEARCH ── */
+    /* ── SEARCH (matches Tasks) ── */
     .search-wrap { margin-bottom: 16px; }
-    .search-input { width: 100%; padding: 12px 16px; border-radius: 100px; border: none; background: var(--bg-surface); color: var(--text-1); font-size: 16px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-family: inherit; }
+    .search-input { width: 100%; padding: 12px 16px; border-radius: 12px; border: none; background: var(--bg-surface); color: var(--text-1); font-size: 16px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-family: inherit; }
     .search-input::placeholder { color: var(--text-3); }
 
     /* ── WEEK TRACKER DOTS ── */
     .day-dot {
-      width: 28px; height: 36px; border-radius: 100px;
+      width: 28px; height: 36px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       background: var(--bg-input); color: var(--text-4); font-size: 12px; font-weight: 700;
     }
     .day-dot.done { background: var(--success); color: #fff; }
     .day-dot.today:not(.done) { border: 1.5px solid var(--accent); color: var(--accent); }
 
-    /* ══════════════════════════════════════════════════════════════════
-       NEW PREMIUM ACTIVE WORKOUT UI
-    ══════════════════════════════════════════════════════════════════ */
-    .premium-header {
-      position: sticky; top: 0; z-index: 50;
-      padding: calc(var(--safe-top) + 16px) 20px 16px;
-      background: rgba(242, 242, 247, 0.65);
-      backdrop-filter: blur(40px) saturate(250%); -webkit-backdrop-filter: blur(40px) saturate(250%);
-      border-bottom: 0.5px solid var(--border);
+    /* ── ACTIVE WORKOUT ── */
+    .active-ex-card {
+      background: var(--bg-surface); border-radius: 16px;
+      margin-bottom: 12px; border: 0.5px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03); overflow: hidden;
+    }
+    .ex-header {
       display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 16px; border-bottom: 0.5px solid var(--border);
     }
-    [data-theme="dark"] .premium-header { background: rgba(0, 0, 0, 0.65); }
-    
-    .timer-wrap { display: flex; align-items: center; gap: 8px; }
-    .timer-text { 
-      font-family: ui-monospace, monospace; color: var(--success); 
-      font-weight: 800; font-size: 20px; letter-spacing: -0.02em;
-    }
-    
-    .finish-btn { 
-      background: var(--accent); color: white; border: none; padding: 8px 22px; 
-      border-radius: 100px; font-weight: 700; font-size: 15px; cursor: pointer; 
-      box-shadow: 0 4px 12px rgba(0,122,255,0.25); transition: all 0.2s; 
-    }
-    .finish-btn:active { transform: scale(0.92); }
+    .ex-title { font-size: 16px; font-weight: 700; color: var(--accent); }
 
-    .title-input { 
-      width: 100%; border: none; background: transparent; 
-      font-size: 34px; font-weight: 800; letter-spacing: -0.04em; 
-      color: var(--text-1); outline: none; padding: 24px 20px 8px; 
-    }
-
-    .exercise-block { margin-bottom: 32px; }
-
-    .ex-header-floating {
-      display: flex; justify-content: space-between; align-items: flex-end;
-      padding: 24px 20px 12px;
-    }
-    .ex-title-floating { 
-      font-size: 20px; font-weight: 800; color: var(--text-1); 
-      letter-spacing: -0.02em; line-height: 1.1; 
-    }
-    
-    .ex-actions-floating { display: flex; gap: 10px; }
-    .icon-btn-float {
-      width: 32px; height: 32px; border-radius: 50%; border: none;
-      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
-      background: var(--bg-surface); box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 0.5px solid var(--border);
-    }
-    .icon-btn-float:active { transform: scale(0.9); }
-    .icon-btn-float.coach { color: var(--accent); }
-    .icon-btn-float.remove { color: var(--danger); }
-    .icon-btn-float svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
-
-    .set-labels {
-      display: flex; align-items: center; padding: 0 24px 8px;
-      font-size: 11px; font-weight: 700; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    .col-set { width: 36px; text-align: center; }
-    .col-prev { flex: 1; text-align: center; }
-    .col-val { width: 68px; text-align: center; }
-    .col-check { width: 44px; text-align: center; }
-
-    /* FULL PILL SHAPE ROW */
-    .pill-row {
-      display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px;
-      margin: 0 16px 8px; border-radius: 100px;
-      background: var(--bg-surface); border: 0.5px solid var(--border);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-    }
-    .pill-row.is-focused {
-      transform: scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 10;
-      border-color: var(--accent);
-    }
-    .pill-row.done { 
-      background-color: var(--success-faded); border-color: transparent; 
-      transform: scale(1); box-shadow: none; 
-    }
-    .pill-row.done .set-input { 
-      background: transparent; color: var(--success); 
-      font-weight: 800; font-size: 19px; 
-    }
-    .pill-row.done .set-idx-badge { background: transparent; color: var(--success); }
-
-    /* FULL CIRCLE BADGE */
-    .set-idx-badge {
-      width: 34px; height: 34px; border-radius: 50%; background: var(--bg-input);
+    .ex-remove-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,59,48,0.1); color: var(--danger);
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 800; color: var(--text-2); font-family: ui-monospace, monospace;
+      cursor: pointer; border: none; flex-shrink: 0;
     }
-    
-    .set-prev-tag {
-      display: inline-flex; justify-content: center; align-items: center;
-      padding: 6px 12px; border-radius: 100px; background: var(--bg-input);
-      font-size: 13px; color: var(--text-3); font-family: ui-monospace, monospace; font-weight: 600;
-      cursor: pointer; transition: 0.15s;
+    .ex-remove-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
+
+    /* Set table */
+    .set-table { width: 100%; border-collapse: collapse; }
+    .set-table thead th {
+      font-size: 11px; font-weight: 600; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      text-align: center; padding: 10px 4px 8px;
     }
-    .set-prev-tag:active { background: var(--border-md); transform: scale(0.95); }
+    .set-table thead th:first-child { text-align: left; padding-left: 16px; }
+    .set-row { border-top: 0.5px solid var(--border); transition: background-color 0.2s; }
+    .set-row td { padding: 8px 4px; vertical-align: middle; }
+    .set-row td:first-child { padding-left: 16px; }
+    .set-row td:last-child { padding-right: 12px; }
+    .set-row.done { background-color: var(--success-faded); }
+
+    .set-num {
+      font-size: 13px; font-weight: 700; color: var(--text-3);
+      font-family: ui-monospace, monospace; display: flex; align-items: center; gap: 4px;
+    }
+    .set-row.done .set-num { color: var(--success); }
+
+    /* Set tag badges */
+    .set-tag { font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .set-tag.warmup  { background: rgba(90,200,250,0.15); color: #5ac8fa; }
+    .set-tag.failure { background: rgba(255,59,48,0.12); color: var(--danger); }
+    .set-tag.drop    { background: rgba(175,82,222,0.12); color: #af52de; }
+    [data-theme="dark"] .set-tag.warmup { color: #64d2ff; }
+
+    /* Prev cell — tappable to fill */
+    .set-prev-btn {
+      font-size: 12px; color: var(--text-4); font-family: ui-monospace, monospace;
+      background: none; border: none; cursor: pointer; padding: 4px 2px;
+      text-align: center; width: 100%; transition: color 0.15s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 64px;
+    }
+    .set-prev-btn:hover, .set-prev-btn:active { color: var(--accent); }
 
     .set-input {
-      width: 68px; height: 44px; border-radius: 100px; background: var(--bg-input);
-      border: 1.5px solid transparent; text-align: center; font-size: 18px; font-weight: 700;
-      color: var(--text-1); outline: none; font-family: ui-monospace, monospace; transition: all 0.2s ease;
+      width: 100%; max-width: 60px; margin: 0 auto; padding: 8px 4px;
+      border-radius: 8px; background: var(--bg-input); border: 0.5px solid transparent;
+      color: var(--text-1); font-size: 16px; font-weight: 600; text-align: center;
+      outline: none; font-family: ui-monospace, monospace; transition: 0.2s; display: block;
     }
     .set-input:focus { border-color: var(--accent); background: var(--bg-surface); }
-    .set-input::placeholder { color: var(--text-4); font-weight: 600; }
+    .set-input::placeholder { color: var(--text-4); font-weight: 500; }
+    .set-row.done .set-input { color: var(--success); }
 
-    .rpe-btn-prm {
-      width: 32px; height: 44px; border: none; background: transparent;
-      color: var(--text-4); font-size: 14px; font-weight: 800; font-family: ui-monospace, monospace;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    /* RPE button */
+    .rpe-btn {
+      font-size: 12px; font-weight: 700; font-family: ui-monospace, monospace;
+      color: var(--text-4); background: none; border: none; cursor: pointer;
+      padding: 4px; width: 36px; text-align: center;
     }
-    .rpe-btn-prm.has-val { color: var(--warning); }
+    .rpe-btn.set { color: var(--warning); }
 
-    .prm-check {
-      width: 36px; height: 36px; border-radius: 50%; background: var(--bg-input);
+    /* Checkmark */
+    .set-check {
+      width: 32px; height: 32px; margin: 0 auto; border-radius: 8px;
+      background: var(--bg-input); border: 1px solid var(--border-md);
       display: flex; align-items: center; justify-content: center;
-      color: var(--text-4); cursor: pointer; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer; transition: all 0.15s; color: var(--text-4);
     }
-    .prm-check svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 3.5; stroke-linecap: round; transition: all 0.2s; }
-    
-    .pill-row.done .prm-check { 
-      background: var(--success); color: white; transform: scale(1.1); 
-      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4); 
-    }
-    .pill-row.done .prm-check svg { transform: scale(1.1); }
+    .set-check svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 3; stroke-linecap: round; }
+    .set-row.done .set-check { background: var(--success); border-color: transparent; color: #fff; }
 
-    .add-set-btn-pill {
-      display: block; width: calc(100% - 32px); margin: 8px 16px 0; padding: 14px; border-radius: 100px;
-      background: transparent; border: 1.5px dashed var(--border-md);
-      color: var(--text-3); font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.15s;
+    .add-set-btn {
+      width: 100%; padding: 12px; border-radius: 0; background: transparent;
+      border: none; border-top: 0.5px dashed var(--border-md);
+      color: var(--text-3); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.15s; font-family: inherit;
     }
-    .add-set-btn-pill:active { background: var(--bg-input); transform: scale(0.98); }
-
-    /* TOOL BAR BUTTONS */
-    .tool-pill-btn {
-      flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 14px; border-radius: 100px; border: 0.5px solid var(--border);
-      background: var(--bg-surface); color: var(--text-2); font-size: 14px; font-weight: 700;
-      cursor: pointer; transition: 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    }
-    .tool-pill-btn:active { transform: scale(0.96); background: var(--bg-input); }
-    .tool-pill-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
-
-    .page-add-btn { 
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: calc(100% - 32px); margin: 0 auto 16px; padding: 18px; 
-      border-radius: 100px; border: none; background: var(--accent-faded); 
-      color: var(--accent); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.15s; 
-    }
-    .page-add-btn:active { transform: scale(0.96); }
-    .page-add-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
-
-    .page-danger-btn { 
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: calc(100% - 32px); margin: 0 auto 32px; padding: 18px; 
-      border-radius: 100px; border: none; background: rgba(255,59,48,0.1); 
-      color: var(--danger); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.15s; 
-    }
-    .page-danger-btn:active { transform: scale(0.96); }
+    .add-set-btn:active { background: var(--bg-input); }
 
     /* ── REST TIMER ── */
     #restTimerWrap {
@@ -437,11 +368,10 @@
       width: calc(100% - 40px); max-width: 300px;
       background: rgba(255,255,255,0.72);
       backdrop-filter: blur(28px) saturate(210%); -webkit-backdrop-filter: blur(28px) saturate(210%);
-      border-radius: 100px; padding: 10px 16px;
+      border-radius: 20px; padding: 10px 16px;
       display: flex; align-items: center; justify-content: space-between;
       box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
       border: 1px solid rgba(255,255,255,0.8); z-index: 85;
-      /* z-index 85: below sheets (200) and overlay (150), but above content */
       transition: opacity 0.3s;
     }
     [data-theme="dark"] #restTimerWrap {
@@ -452,13 +382,13 @@
     @media (min-width: 768px) {
       #restTimerWrap { bottom: 32px; left: 140px; right: auto; transform: none; width: auto; min-width: 240px; }
     }
-    .rest-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--bg-surface); border: 0.5px solid var(--border); color: var(--text-1); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .rest-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-surface); border: 0.5px solid var(--border); color: var(--text-1); display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .rest-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; }
     .rest-time { font-size: 20px; font-weight: 700; font-family: ui-monospace, monospace; color: var(--text-1); letter-spacing: -0.02em; }
-    .rest-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-left: 2px;}
+    .rest-label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
 
     /* ── TOAST ── */
-    .toast { position: fixed; top: calc(var(--safe-top) + 16px); left: 50%; transform: translateX(-50%); background: var(--text-1); color: var(--bg-canvas); padding: 10px 20px; border-radius: 100px; font-size: 14px; font-weight: 600; opacity: 0; z-index: 999; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15);}
+    .toast { position: fixed; top: calc(var(--safe-top) + 16px); left: 50%; transform: translateX(-50%); background: var(--text-1); color: var(--bg-canvas); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; opacity: 0; z-index: 999; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
 
     /* ── EMPTY STATE ── */
     .empty-state { text-align: center; padding: 48px 20px; color: var(--text-3); }
@@ -468,7 +398,7 @@
 
     /* ── STATS ── */
     .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-    .stat-tile { background: var(--bg-surface); border-radius: 24px; padding: 16px; border: 0.5px solid var(--border); }
+    .stat-tile { background: var(--bg-surface); border-radius: 14px; padding: 16px; border: 0.5px solid var(--border); }
     .stat-tile-val { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); font-family: ui-monospace, monospace; }
     .stat-tile-label { font-size: 12px; font-weight: 600; color: var(--text-3); margin-top: 2px; }
 
@@ -485,7 +415,7 @@
 
     /* ── AI STREAMING ── */
     .ai-output {
-      background: var(--bg-canvas); border-radius: 16px; padding: 16px;
+      background: var(--bg-canvas); border-radius: 12px; padding: 14px 16px;
       font-size: 14px; color: var(--text-2); line-height: 1.6;
       border: 0.5px solid var(--border); margin-top: 12px;
       white-space: pre-wrap; max-height: 280px; overflow-y: auto;
@@ -497,16 +427,16 @@
     @keyframes blink { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
 
     /* ── PLATE CHIPS ── */
-    .plate-chip { height: 40px; min-width: 40px; padding: 0 8px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; font-family: ui-monospace, monospace; color: #fff; flex-direction: column; gap: 1px; }
+    .plate-chip { height: 40px; min-width: 40px; padding: 0 8px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; font-family: ui-monospace, monospace; color: #fff; flex-direction: column; gap: 1px; }
     .plate-chip .pc-sub { font-size: 9px; font-weight: 600; opacity: 0.75; }
 
     /* ── CSV DROP ZONE ── */
-    .drop-zone { border: 1.5px dashed var(--border-md); border-radius: 16px; padding: 24px 16px; text-align: center; color: var(--text-3); cursor: pointer; transition: 0.2s; }
+    .drop-zone { border: 1.5px dashed var(--border-md); border-radius: 12px; padding: 24px 16px; text-align: center; color: var(--text-3); cursor: pointer; transition: 0.2s; }
     .drop-zone.drag-over { border-color: var(--accent); background: var(--accent-faded); color: var(--accent); }
     .drop-zone input[type="file"] { display: none; }
 
     /* ── SYNC BADGE ── */
-    .sync-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 100px; color: var(--text-3); background: var(--bg-input); }
+    .sync-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 8px; color: var(--text-3); background: var(--bg-input); }
     .sync-badge.synced { color: var(--success); background: var(--success-faded); }
     .sync-badge.syncing { color: var(--warning); background: rgba(255,149,0,0.1); }
     .sync-badge.error { color: var(--danger); background: rgba(255,59,48,0.1); }
@@ -521,7 +451,7 @@
     .routine-ex-name { flex: 1; font-size: 15px; font-weight: 500; color: var(--text-1); }
 
     /* ── THEME SWATCHES (Settings) ── */
-    .theme-swatch { width: 60px; height: 40px; border-radius: 12px; cursor: pointer; border: 2px solid var(--border); transition: border-color 0.15s; }
+    .theme-swatch { width: 60px; height: 40px; border-radius: 8px; cursor: pointer; border: 2px solid var(--border); transition: border-color 0.15s; }
     .theme-swatch.active { border-color: var(--accent); }
   </style>
 </head>
@@ -571,7 +501,7 @@
       <div class="content-centerer">
 
         <!-- Start empty -->
-        <button id="startEmptyBtn" style="width:100%; padding:20px; border-radius:100px; border:none; background:var(--text-1); color:var(--bg-canvas); font-size:17px; font-weight:700; letter-spacing:-0.02em; cursor:pointer; margin-bottom:24px; font-family:inherit; transition: 0.15s;">
+        <button id="startEmptyBtn" style="width:100%; padding:20px; border-radius:16px; border:none; background:var(--text-1); color:var(--bg-canvas); font-size:17px; font-weight:700; letter-spacing:-0.02em; cursor:pointer; margin-bottom:24px; font-family:inherit;">
           Start Empty Workout
         </button>
 
@@ -591,35 +521,21 @@
 
   <!-- ACTIVE WORKOUT SCREEN -->
   <div id="activeWorkoutScreen">
-    <div class="premium-header">
-      <div class="timer-wrap">
-        <div class="timer-text" id="awTime">00:00</div>
-        <div id="wakeLockBadge" style="display:none; font-size:11px; font-weight:600; color:var(--text-4); background:var(--bg-input); padding:2px 8px; border-radius:100px;">screen on</div>
-      </div>
-      <button class="finish-btn" id="awFinishBtn">Finish</button>
-    </div>
-    <div class="scroll-container" style="padding-top:0; padding-bottom:160px;">
-      <div class="content-centerer">
-        <input class="title-input" id="awTitleInput" type="text" value="Evening Workout">
-        <div id="awList"></div>
-        
-        <!-- NEW TOOLS ROW -->
-        <div style="display:flex; gap:12px; margin: 24px 16px 16px;">
-          <button class="tool-pill-btn" id="awPlateCalcBtn">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-            Plate Calc
-          </button>
-          <button class="tool-pill-btn" id="awInWorkoutNoteBtn">
-            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Workout Note
-          </button>
+    <div class="header content-centerer" style="padding-bottom:16px; border-bottom:0.5px solid var(--border);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div id="awTime" style="font-family:ui-monospace,monospace; color:var(--success); font-weight:700; font-size:18px;">00:00</div>
+          <div id="wakeLockBadge" style="display:none; font-size:11px; font-weight:600; color:var(--text-4); background:var(--bg-input); padding:2px 8px; border-radius:8px;">screen on</div>
         </div>
-
-        <button class="page-add-btn" id="awAddExBtn">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Exercise
-        </button>
-        <button class="page-danger-btn" id="awCancelTriggerBtn">Cancel Workout</button>
+        <button class="sheet-btn primary" id="awFinishBtn" style="margin:0; width:auto; padding:8px 18px; border-radius:12px; font-size:14px;">Finish</button>
+      </div>
+      <input class="app-title" id="awTitleInput" type="text" value="Evening Workout" style="border:none; background:transparent; margin:0; outline:none; font-family:inherit; width:100%;">
+    </div>
+    <div class="scroll-container" style="padding-top:16px; padding-bottom:160px;">
+      <div class="content-centerer">
+        <div id="awList"></div>
+        <button class="sheet-btn secondary" id="awAddExBtn" style="margin-top:8px; margin-bottom:8px;">+ Add Exercise</button>
+        <button class="danger-text-btn" id="awCancelTriggerBtn">Cancel Workout</button>
       </div>
     </div>
   </div>
@@ -646,11 +562,11 @@
         </div>
         <div style="display:flex; gap:4px; align-items:center; margin-top:10px;">
           <span style="font-size:10px; color:var(--text-4);">Less</span>
-          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell"></div>
-          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l1"></div>
-          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l2"></div>
-          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l3"></div>
-          <div style="width:10px;height:10px;border-radius:100px;" class="hm-cell l4"></div>
+          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell"></div>
+          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l1"></div>
+          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l2"></div>
+          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l3"></div>
+          <div style="width:10px;height:10px;border-radius:2px;" class="hm-cell l4"></div>
           <span style="font-size:10px; color:var(--text-4);">More</span>
         </div>
       </div>
@@ -659,7 +575,7 @@
       <div class="card" style="cursor:default; margin-bottom:12px;">
         <div class="card-label">
           Estimated 1RM
-          <select id="rm1Select" style="background:var(--bg-input); border:none; color:var(--text-2); font-size:11px; font-weight:600; border-radius:100px; padding:4px 8px; cursor:pointer; outline:none; font-family:inherit; max-width: 150px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"></select>
+          <select id="rm1Select" style="background:var(--bg-input); border:none; color:var(--text-2); font-size:11px; font-weight:600; border-radius:6px; padding:2px 6px; cursor:pointer; outline:none; font-family:inherit;"></select>
         </div>
         <div class="rm-chart" id="rm1Chart"></div>
         <div style="font-size:11px; color:var(--text-4); margin-top:6px;">Epley: w × (1 + r/30)</div>
@@ -728,18 +644,15 @@
     <div style="font-size:20px; font-weight:700; margin-bottom:6px;">Finish Workout?</div>
     <div style="font-size:14px; color:var(--text-3);" id="finishSummary">Summary will appear here.</div>
   </div>
-  <div id="saveAsRoutineWrap" style="background:var(--bg-canvas); border-radius:16px; border:0.5px solid var(--border); padding:16px 20px; margin-bottom:4px; display:none;">
+  <div id="saveAsRoutineWrap" style="background:var(--bg-canvas); border-radius:12px; border:0.5px solid var(--border); padding:14px 16px; margin-bottom:4px; display:none;">
     <div style="font-size:13px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">Save as Routine</div>
     <input class="input" id="saveAsRoutineNameInput" type="text" placeholder="Routine name…" style="margin-bottom:0;">
   </div>
   <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; padding:4px 0;">
-    <input type="checkbox" id="saveAsRoutineCheck" style="width:20px;height:20px;accent-color:var(--accent);cursor:pointer;border-radius:100px;">
-    <label for="saveAsRoutineCheck" style="font-size:15px; font-weight:500; color:var(--text-2); cursor:pointer;">Save as new routine</label>
+    <input type="checkbox" id="saveAsRoutineCheck" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;">
+    <label for="saveAsRoutineCheck" style="font-size:14px; font-weight:500; color:var(--text-2); cursor:pointer;">Save as new routine</label>
   </div>
-  <!-- Workout Notes added to confirm finish for convenience -->
-  <button class="sheet-btn secondary" id="awNoteTriggerBtn" style="margin-top:12px; margin-bottom:12px;">Add Workout Note</button>
-
-  <button class="sheet-btn primary" id="confirmFinishYesBtn" style="margin-top:0;">Save Workout</button>
+  <button class="sheet-btn primary" id="confirmFinishYesBtn" style="margin-top:12px;">Save Workout</button>
   <button class="sheet-btn secondary" id="confirmFinishNoBtn">Keep Going</button>
 </div>
 
@@ -798,8 +711,8 @@
     <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
   </div>
   <div style="display:flex; gap:8px; margin-bottom:12px;">
-    <input class="input" id="plateTargetInput" type="number" inputmode="decimal" placeholder="Target weight" style="flex:1; margin:0; border-radius: 100px;">
-    <select class="input" id="plateBarSelect" style="flex:0 0 100px; margin:0; border-radius: 100px;">
+    <input class="input" id="plateTargetInput" type="number" inputmode="decimal" placeholder="Target weight" style="flex:1; margin:0;">
+    <select class="input" id="plateBarSelect" style="flex:0 0 100px; margin:0;">
       <option value="45">45 lb bar</option>
       <option value="35">35 lb bar</option>
       <option value="20">20 kg bar</option>
@@ -808,6 +721,7 @@
   <button class="sheet-btn primary" id="calcPlatesBtn" style="margin-top:0; margin-bottom:16px;">Calculate</button>
   <div id="plateResult"></div>
 </div>
+
 
 <!-- ROUTINE EDITOR -->
 <div class="sheet tall" id="sheetRoutineEditor">
@@ -826,7 +740,8 @@
   <button class="sheet-btn danger" id="deleteRoutineBtn" style="flex-shrink:0; display:none;">Delete Routine</button>
 </div>
 
-<!-- SELECT EXERCISE (Moved below Routine Editor so stacking context works correctly) -->
+   
+<!-- SELECT EXERCISE -->
 <div class="sheet tall" id="sheetExerciseSelect">
   <div class="handle"></div>
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -836,7 +751,7 @@
   <!-- Source tabs -->
   <div style="display:flex; gap:8px; margin-bottom:12px;">
     <button class="s-chip active" id="exSrcLocal" style="flex:1;">Library</button>
-    <button class="s-chip" id="exSrcWger" style="flex:1;">Search wger</button>
+    <button class="s-chip" id="exSrcApi" style="flex:1;">Search Web</button>
   </div>
   <!-- Local library -->
   <div id="exLocalPane">
@@ -853,14 +768,14 @@
     <div style="flex:1; overflow-y:auto;" id="exSelectList"></div>
     <button class="sheet-btn secondary" id="createCustomExBtn" style="flex-shrink:0; margin-top:8px;">+ Create Custom Exercise</button>
   </div>
-  <!-- Wger search pane -->
-  <div id="exWgerPane" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+  <!-- API search pane (ExerciseDB) -->
+  <div id="exApiPane" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
     <div style="display:flex; gap:8px; margin-bottom:12px;">
-      <input class="search-input" id="wgerSearchInput" type="search" placeholder="Search database (e.g. cable)..." style="flex:1;">
-      <button class="sheet-btn primary" id="wgerSearchBtn" style="margin:0; width:auto; padding:0 16px; border-radius:100px; font-size:14px; flex-shrink:0;">Search</button>
+      <input class="search-input" id="apiSearchInput" type="search" placeholder="Search ExerciseDB..." style="flex:1;">
+      <button class="sheet-btn primary" id="apiSearchBtn" style="margin:0; width:auto; padding:0 16px; border-radius:12px; font-size:14px; flex-shrink:0;">Search</button>
     </div>
-    <div style="font-size:12px; color:var(--text-4); margin-bottom:8px;">wger.de open-source database — no API key needed.</div>
-    <div style="flex:1; overflow-y:auto;" id="wgerResultsList"></div>
+    <div style="font-size:12px; color:var(--text-4); margin-bottom:8px;">Powered by ExerciseDB. Requires RapidAPI key in Settings.</div>
+    <div style="flex:1; overflow-y:auto;" id="apiResultsList"></div>
   </div>
 </div>
 
@@ -903,6 +818,9 @@
   <div class="sheet-label">Gemini API Key</div>
   <input class="input" id="geminiKeyInput" type="password" placeholder="AI features (stored locally)">
 
+  <div class="sheet-label">RapidAPI Key (ExerciseDB)</div>
+  <input class="input" id="rapidApiKeyInput" type="password" placeholder="For remote exercise searches">
+
   <div class="sheet-label">Athlete Profile</div>
   <div style="font-size:12px; color:var(--text-3); margin-bottom:6px; line-height:1.5;">Sent to the AI with every request. Include age, sex, training age, sleep, injuries, goals — anything the coach should know.</div>
   <textarea class="input" id="athleteProfileInput" rows="4" placeholder="23M, 3 years lifting, sleep 8h, goal: hypertrophy, no injuries."></textarea>
@@ -932,12 +850,9 @@
 <!-- WORKOUT NOTE -->
 <div class="sheet" id="sheetWorkoutNote">
   <div class="handle"></div>
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-    <div class="sheet-title" style="margin:0;">Workout Note</div>
-    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
-  </div>
+  <div class="sheet-title">Workout Note</div>
   <textarea class="input" id="awNoteTA" rows="4" placeholder="Felt strong. Sleep 7h. Pre-workout: black coffee."></textarea>
-  <button class="sheet-btn primary" id="saveNoteBtn">Save Note</button>
+  <button class="sheet-btn primary" id="saveNoteBtn">Save</button>
 </div>
 
 <script>
@@ -956,6 +871,7 @@ document.addEventListener('focusout', e => {
 });
 document.addEventListener('DOMContentLoaded', () => {
   // Each scroll container tracks its own lastY independently.
+  // A shared variable causes nav to get stuck hidden when switching tabs.
   document.querySelectorAll('.scroll-container, .sheet').forEach(c => {
     let lastY = 0;
     c.addEventListener('scroll', e => {
@@ -968,7 +884,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ══════════════════════════════════════════════════════════════════
-   INDEXEDDB — all data lives here
+   INDEXEDDB — all data lives here; localStorage only for settings
+   Schema: DB "kw_lift" v1
+     store "workouts"  keyPath "id"
+     store "routines"  keyPath "id"
+     store "customEx"  keyPath "id"
+   Settings stay in localStorage (tiny, synchronous reads needed at boot).
+   
+   Why IDB instead of localStorage?
+   - localStorage is synchronous and blocks the main thread when the
+     serialized JSON gets large (many workouts = multi-MB strings).
+   - IDB is async, supports large payloads, and is quota-unlimited on iOS.
+   - We open a single connection at boot and reuse it everywhere.
 ══════════════════════════════════════════════════════════════════ */
 const IDB_NAME = 'kw_lift';
 const IDB_VER  = 1;
@@ -1025,7 +952,7 @@ function idbClear(store) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   IN-MEMORY CACHE
+   IN-MEMORY CACHE (populated from IDB on boot)
 ══════════════════════════════════════════════════════════════════ */
 const DEFAULT_EXERCISES = [
   {id:'e1',  name:'Bench Press (Barbell)',        part:'Chest'},
@@ -1037,25 +964,28 @@ const DEFAULT_EXERCISES = [
   {id:'e7',  name:'Barbell Row',                   part:'Back'},
   {id:'e8',  name:'Overhead Press (Dumbbell)',     part:'Shoulders'},
   {id:'e9',  name:'Lateral Raise (Dumbbell)',      part:'Shoulders'},
-  {id:'e10', name:'Bicep Curl (Dumbbell)',          part:'Arms'},
+  {id:'e10', name:'Bicep Curl (Dumbbell)',         part:'Arms'},
   {id:'e11', name:'Tricep Extension (Cable)',       part:'Arms'},
   {id:'e12', name:'Crunch',                        part:'Core'},
-  {id:'e13', name:'Hip Thrust (Barbell)',           part:'Legs'},
+  {id:'e13', name:'Hip Thrust (Barbell)',          part:'Legs'},
   {id:'e14', name:'Lat Pulldown',                  part:'Back'},
   {id:'e15', name:'Cable Row',                     part:'Back'},
   {id:'e16', name:'Dips',                          part:'Chest'},
   {id:'e17', name:'Leg Press',                     part:'Legs'},
   {id:'e18', name:'Leg Curl',                      part:'Legs'},
-  {id:'e19', name:'Face Pull (Cable)',              part:'Shoulders'},
+  {id:'e19', name:'Face Pull (Cable)',             part:'Shoulders'},
   {id:'e20', name:'Bulgarian Split Squat',         part:'Legs'},
 ];
 
+// Routine exercises are objects: {exId, sets} where sets = number of sets to pre-create
+// Legacy routines stored plain exId strings — normalizeRoutine() handles migration
 const DEFAULT_ROUTINES = [
   {id:'r1', name:'Push Day', exercises:[{exId:'e1',sets:3},{exId:'e2',sets:3},{exId:'e8',sets:3},{exId:'e9',sets:3},{exId:'e11',sets:3}]},
   {id:'r2', name:'Pull Day', exercises:[{exId:'e5',sets:3},{exId:'e6',sets:3},{exId:'e7',sets:3},{exId:'e10',sets:3}]},
   {id:'r3', name:'Leg Day',  exercises:[{exId:'e3',sets:4},{exId:'e4',sets:3},{exId:'e13',sets:3}]},
 ];
 
+// Migrate old string[] format to {exId, sets}[]
 function normalizeRoutine(r) {
   r.exercises = (r.exercises || []).map(e =>
     typeof e === 'string' ? {exId: e, sets: 3} : e
@@ -1063,14 +993,16 @@ function normalizeRoutine(r) {
   return r;
 }
 
+// Runtime cache
 let WORKOUTS  = [];
 let ROUTINES  = [];
 let CUSTOM_EX = [];
 
+// Settings in localStorage (synchronous, always fast)
 const CFG_KEY = 'kw_lift_cfg';
 let CFG = {
   theme: 'light', unit: 'lbs', restDuration: 90,
-  geminiKey: '', gistPAT: '', gistID: '', athleteProfile: ''
+  geminiKey: '', rapidApiKey: '', gistPAT: '', gistID: '', athleteProfile: ''
 };
 
 function loadCFG() {
@@ -1078,6 +1010,7 @@ function loadCFG() {
 }
 function saveCFG() { localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }
 
+/* Active workout — persisted in localStorage for instant crash recovery */
 const AW_KEY = 'kw_lift_aw';
 let AW = null;
 
@@ -1097,6 +1030,16 @@ function getEx(id) { return [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => e.id 
 function getExName(id) { return getEx(id)?.name || 'Unknown'; }
 function epley(w, r) { return r === 1 ? w : Math.round(w * (1 + r/30)); }
 
+function normalizeExName(str) {
+  if (!str) return '';
+  return str.toLowerCase()
+            // 1. Remove anything inside parentheses, e.g., " (Barbell)"
+            .replace(/\(.*?\)/g, '')
+            // 2. Remove all spaces, hyphens, and special characters
+            .replace(/[^a-z0-9]/g, '')
+            .trim();
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.style.opacity = 1;
@@ -1105,8 +1048,13 @@ function showToast(msg) {
 
 /* ══════════════════════════════════════════════════════════════════
    WAKE LOCK API
+   Prevents screen from sleeping during a workout.
+   Requesting a lock requires a user gesture (button tap) on some
+   browsers — we request it on workout start which satisfies that.
+   The lock is released when the workout ends or the page hides.
 ══════════════════════════════════════════════════════════════════ */
 let wakeLock = null;
+
 async function requestWakeLock() {
   if (!('wakeLock' in navigator)) return;
   try {
@@ -1115,12 +1063,15 @@ async function requestWakeLock() {
     wakeLock.addEventListener('release', () => {
       document.getElementById('wakeLockBadge').style.display = 'none';
     });
-  } catch(e) {}
+  } catch(e) { /* silently fail — not all browsers support this */ }
 }
+
 async function releaseWakeLock() {
   if (wakeLock) { try { await wakeLock.release(); } catch(e) {} wakeLock = null; }
   document.getElementById('wakeLockBadge').style.display = 'none';
 }
+
+// Re-acquire on page visibility restore (lock is released on tab hide)
 document.addEventListener('visibilitychange', async () => {
   if (AW && document.visibilityState === 'visible') requestWakeLock();
 });
@@ -1131,10 +1082,9 @@ document.addEventListener('visibilitychange', async () => {
 let timerInterval = null;
 let restTimerInterval = null;
 let restTimeRemaining = 0;
-let restEndTime = 0;
 
 function updateAWTime() {
-  if (!AW) return;
+  if (!AW) return; // guard: interval may fire one last time after AW is nulled
   const s = Math.floor((Date.now() - AW.startTime) / 1000);
   const m = Math.floor(s / 60);
   document.getElementById('awTime').textContent = `${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
@@ -1150,7 +1100,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     const tab = e.currentTarget.dataset.tab;
     document.body.classList.remove('history-mode','workout-mode','stats-mode');
     document.body.classList.add(tab + '-mode');
+    // Always show nav when switching tabs — scroll position resets
     document.body.classList.remove('scrolling-down');
+    // Reset scroll position of the new view's scroll container
     const view = document.getElementById(tab + 'View');
     if (view) { const sc = view.querySelector('.scroll-container'); if (sc) sc.scrollTop = 0; }
     if (tab === 'history') renderHistory();
@@ -1170,6 +1122,7 @@ function closeSheet(id) {
   if (!s) return;
   s.style.transform = ''; s.style.transition = '';
   s.classList.remove('open');
+  // Only close overlay if no other sheets are open
   if (!document.querySelector('.sheet.open')) {
     document.getElementById('overlay').classList.remove('open');
   }
@@ -1181,15 +1134,21 @@ function closeSheets() {
   });
   document.getElementById('overlay').classList.remove('open');
 }
+
+// close-sheet-btn closes only its own sheet (not all stacked sheets)
 document.querySelectorAll('.close-sheet-btn').forEach(b => b.addEventListener('click', () => {
   const sheet = b.closest('.sheet');
   if (sheet) closeSheet(sheet.id); else closeSheets();
 }));
+
+// Overlay tap: close only the topmost open sheet so stacked sheets work
 document.getElementById('overlay').addEventListener('click', () => {
   const open = [...document.querySelectorAll('.sheet.open')];
   if (!open.length) { document.getElementById('overlay').classList.remove('open'); return; }
   closeSheet(open[open.length - 1].id);
 });
+
+// Swipe-to-dismiss: close only this sheet
 document.querySelectorAll('.sheet').forEach(sheet => {
   let startY = 0, dragging = false;
   sheet.addEventListener('touchstart', e => {
@@ -1215,6 +1174,7 @@ document.querySelectorAll('.sheet').forEach(sheet => {
 document.getElementById('settingsBtn').addEventListener('click', () => {
   document.getElementById('restDurInput').value      = CFG.restDuration;
   document.getElementById('geminiKeyInput').value    = CFG.geminiKey;
+  document.getElementById('rapidApiKeyInput').value  = CFG.rapidApiKey;
   document.getElementById('athleteProfileInput').value = CFG.athleteProfile;
   document.getElementById('gistPATInput').value      = CFG.gistPAT;
   document.getElementById('gistIDInput').value       = CFG.gistID;
@@ -1224,6 +1184,7 @@ document.getElementById('settingsBtn').addEventListener('click', () => {
   updateNotifStatus();
   openSheet('sheetSettings');
 });
+
 document.querySelectorAll('.theme-swatch').forEach(s => s.addEventListener('click', () => {
   CFG.theme = s.dataset.theme;
   document.documentElement.setAttribute('data-theme', CFG.theme);
@@ -1231,6 +1192,7 @@ document.querySelectorAll('.theme-swatch').forEach(s => s.addEventListener('clic
   saveCFG();
   document.querySelectorAll('.theme-swatch').forEach(x => x.classList.toggle('active', x.dataset.theme === CFG.theme));
 }));
+
 [document.getElementById('unitLbs'), document.getElementById('unitKg')].forEach(el => {
   el.addEventListener('click', () => {
     CFG.unit = el.dataset.unit;
@@ -1239,16 +1201,21 @@ document.querySelectorAll('.theme-swatch').forEach(s => s.addEventListener('clic
     document.getElementById('unitKg').classList.toggle('active',  CFG.unit === 'kg');
   });
 });
+
 document.getElementById('restDurInput').addEventListener('change', e => {
   CFG.restDuration = parseInt(e.target.value) || 90; saveCFG();
 });
 document.getElementById('geminiKeyInput').addEventListener('change', e => {
   CFG.geminiKey = e.target.value.trim(); saveCFG();
 });
+document.getElementById('rapidApiKeyInput').addEventListener('change', e => {
+  CFG.rapidApiKey = e.target.value.trim(); saveCFG();
+});
 document.getElementById('athleteProfileInput').addEventListener('change', e => {
   CFG.athleteProfile = e.target.value.trim(); saveCFG();
 });
 
+// Notification permission
 function updateNotifStatus() {
   const el = document.getElementById('notifStatus');
   const btn = document.getElementById('btnRequestNotif');
@@ -1268,6 +1235,7 @@ function updateNotifStatus() {
     btn.disabled = false;
   }
 }
+
 document.getElementById('btnRequestNotif').addEventListener('click', async () => {
   if (!('Notification' in window)) return;
   const result = await Notification.requestPermission();
@@ -1300,11 +1268,14 @@ function updateSyncBadge(state, label) {
   badge.className = 'sync-badge' + (state !== 'local' ? ' ' + state : '');
   lbl.textContent = label || (CFG.gistID ? 'Gist' : 'Local');
 }
+
 async function gistPush() {
   if (!CFG.gistPAT) { showToast('No PAT configured'); return; }
   updateSyncBadge('syncing', 'Syncing...');
   try {
-    const payload = { workouts: WORKOUTS, routines: ROUTINES, customEx: CUSTOM_EX, unit: CFG.unit };
+    const payload = {
+      workouts: WORKOUTS, routines: ROUTINES, customEx: CUSTOM_EX, unit: CFG.unit
+    };
     const body = { files: { 'lift_data.json': { content: JSON.stringify(payload) } } };
     let url = 'https://api.github.com/gists'; let method = 'POST';
     if (CFG.gistID) { url += '/' + CFG.gistID; method = 'PATCH'; }
@@ -1316,6 +1287,7 @@ async function gistPush() {
     showToast('Pushed to Gist');
   } catch(e) { updateSyncBadge('error'); showToast('Sync failed: ' + e.message); }
 }
+
 document.getElementById('btnGistSave').addEventListener('click', () => {
   CFG.gistPAT = document.getElementById('gistPATInput').value.trim();
   CFG.gistID  = document.getElementById('gistIDInput').value.trim();
@@ -1362,13 +1334,16 @@ function parseStrongCSV(csv) {
       id: uid(), name: w.name,
       startTime: ts, endTime: ts + 3600000, note: '',
       exercises: Object.entries(w.exercises).map(([name, sets]) => {
-        let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => e.name.toLowerCase() === name.toLowerCase());
+        let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => 
+          normalizeExName(e.name) === normalizeExName(name)
+        );
         if (!ex) { ex = { id: uid(), name, part: 'Other' }; CUSTOM_EX.push(ex); idbPut('customEx', ex); }
         return { exId: ex.id, sets };
       })
     };
   });
 }
+
 async function handleCSVImport(file) {
   const text = await file.text();
   try {
@@ -1383,6 +1358,7 @@ async function handleCSVImport(file) {
     showToast(`Imported ${fresh.length} workouts`);
   } catch(e) { showToast('Import failed: ' + e.message); }
 }
+
 const csvDrop  = document.getElementById('csvDropZone');
 const csvInput = document.getElementById('csvFileInput');
 csvDrop.addEventListener('click', () => csvInput.click());
@@ -1393,13 +1369,17 @@ csvDrop.addEventListener('drop', e => { e.preventDefault(); csvDrop.classList.re
 
 /* ══════════════════════════════════════════════════════════════════
    PREVIOUS BEST LOOKUP
+   Returns the best (or matching-set-index) result for this exercise
+   from the most recent workout containing it.
+   Format returned: { kg, reps } or null
 ══════════════════════════════════════════════════════════════════ */
 function getPrevSet(exId, setIndex) {
   const history = [...WORKOUTS].sort((a,b) => b.endTime - a.endTime);
   for (const w of history) {
-    if (AW && w.id === AW.id) continue;
+    if (AW && w.id === AW.id) continue; // skip current session if it somehow got saved
     const ex = w.exercises.find(e => e.exId === exId);
     if (!ex) continue;
+    // Prefer matching set index; fall back to the last completed set
     const s = ex.sets[setIndex] || ex.sets[ex.sets.length - 1];
     if (s && s.done && (s.kg || s.reps)) return { kg: s.kg, reps: s.reps };
   }
@@ -1519,9 +1499,10 @@ function renderRoutines() {
    ROUTINE EDITOR
 ══════════════════════════════════════════════════════════════════ */
 let _editingRoutineId = null;
-let _editingRoutineExercises = [];
+let _editingRoutineExercises = []; // array of {exId, sets}
 
 document.getElementById('addRoutineBtn').addEventListener('click', () => openRoutineEditor(null));
+
 document.getElementById('routineAddExBtn').addEventListener('click', () => {
   _exSelectMode = 'routine';
   document.getElementById('exSearchInput').value = '';
@@ -1609,9 +1590,10 @@ document.getElementById('deleteRoutineBtn').addEventListener('click', async () =
 
 /* ══════════════════════════════════════════════════════════════════
    EXERCISE SELECT SHEET
+   Mode: 'workout' (add to active session) or 'routine' (add to editor)
 ══════════════════════════════════════════════════════════════════ */
 let _exFilter = 'All';
-let _exSelectMode = 'workout';
+let _exSelectMode = 'workout'; // 'workout' | 'routine'
 
 document.getElementById('exFilterRow').addEventListener('click', e => {
   const chip = e.target.closest('.chip');
@@ -1658,75 +1640,90 @@ function renderExSelect() {
   });
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   EXERCISEDB API INTEGRATION
+══════════════════════════════════════════════════════════════════ */
+
 // Tab switching
 document.getElementById('exSrcLocal').addEventListener('click', () => {
   document.getElementById('exSrcLocal').classList.add('active');
-  document.getElementById('exSrcWger').classList.remove('active');
+  document.getElementById('exSrcApi').classList.remove('active');
   document.getElementById('exLocalPane').style.display = 'block';
-  document.getElementById('exWgerPane').style.display = 'none';
+  document.getElementById('exApiPane').style.display = 'none';
 });
-document.getElementById('exSrcWger').addEventListener('click', () => {
-  document.getElementById('exSrcWger').classList.add('active');
+document.getElementById('exSrcApi').addEventListener('click', () => {
+  document.getElementById('exSrcApi').classList.add('active');
   document.getElementById('exSrcLocal').classList.remove('active');
   document.getElementById('exLocalPane').style.display = 'none';
-  document.getElementById('exWgerPane').style.display = 'flex';
-  document.getElementById('wgerSearchInput').focus();
+  document.getElementById('exApiPane').style.display = 'flex';
+  document.getElementById('apiSearchInput').focus();
 });
 
-// Fixed Wger Search - Fetches batch then filters locally
-async function wgerSearch() {
-  const q = document.getElementById('wgerSearchInput').value.trim().toLowerCase();
+async function apiSearch() {
+  const q = document.getElementById('apiSearchInput').value.trim();
   if (!q) return;
-  const list = document.getElementById('wgerResultsList');
+  const list = document.getElementById('apiResultsList');
+  
+  if (!CFG.rapidApiKey) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:14px;">Add your RapidAPI key in Settings first.</div>';
+    return;
+  }
+
   list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-4);font-size:14px;">Searching...</div>';
 
   try {
-    const url = `https://wger.de/api/v2/exerciseinfo/?language=2&limit=250`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    
-    // Local filtering bypasses the broken Wger parameters
-    const results = (data.results || []).filter(ex => {
-        const name = ex.name || '';
-        return name.toLowerCase().includes(q);
+    const url = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(q)}?limit=50`;
+    const res = await fetch(url, {
+      headers: {
+        'X-RapidAPI-Key': CFG.rapidApiKey,
+        'X-RapidAPI-Host': 'exercisedb.p.rapidapi.com'
+      }
     });
+    
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const results = await res.json();
 
     if (!results.length) {
-      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-4);font-size:14px;">No results. Try a different term.</div>';
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-4);font-size:14px;">No results found.</div>';
       return;
     }
 
     list.innerHTML = '';
     results.forEach(ex => {
-      const name = ex.name || 'Unknown';
-      const cat = ex.category?.name || '';
-      
-      const WGER_CAT_MAP = {
-        'Abs': 'Core', 'Arms': 'Arms', 'Back': 'Back', 'Calves': 'Legs',
-        'Chest': 'Chest', 'Legs': 'Legs', 'Shoulders': 'Shoulders',
-      };
-      const part = WGER_CAT_MAP[cat] || 'Other';
+      // Map ExerciseDB body parts to our schema
+      const bp = (ex.bodyPart || '').toLowerCase();
+      let part = 'Other';
+      if (bp.includes('chest')) part = 'Chest';
+      else if (bp.includes('back')) part = 'Back';
+      else if (bp.includes('leg') || bp.includes('calves')) part = 'Legs';
+      else if (bp.includes('arm')) part = 'Arms';
+      else if (bp.includes('shoulder')) part = 'Shoulders';
+      else if (bp.includes('waist') || bp.includes('core')) part = 'Core';
+
+      // Capitalize first letter of exercise name
+      const name = ex.name.charAt(0).toUpperCase() + ex.name.slice(1);
 
       const row = document.createElement('div');
       row.style.cssText = 'padding:14px 20px; border-bottom:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; cursor:pointer;';
       row.innerHTML = `
         <div>
-          <div style="font-size:15px; font-weight:600; color:var(--text-1);">${name}</div>
-          <div style="font-size:12px; color:var(--text-3); margin-top:2px;">${part}${cat && cat !== part ? ' · ' + cat : ''}</div>
+          <div style="font-size:15px; font-weight:600; color:var(--text-1); text-transform: capitalize;">${name}</div>
+          <div style="font-size:12px; color:var(--text-3); margin-top:2px;">${part} · ${ex.equipment || 'Bodyweight'}</div>
         </div>
         <div style="color:var(--accent); width:20px; height:20px; flex-shrink:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
       `;
-      row.addEventListener('click', () => addWgerExercise(name, part));
+      row.addEventListener('click', () => addApiExercise(name, part));
       list.appendChild(row);
     });
   } catch(e) {
-    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--danger);font-size:14px;">Search failed: ${e.message}</div>`;
+    list.innerHTML = `<div style="padding:20px;text-align:center;color:var(--danger);font-size:14px;">Search failed: ${e.message}.<br><span style="color:var(--text-4);">Check your API key.</span></div>`;
   }
 }
 
-function addWgerExercise(name, part) {
-  let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => e.name.toLowerCase() === name.toLowerCase());
+function addApiExercise(name, part) {
+  let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => 
+    normalizeExName(e.name) === normalizeExName(name)
+  );
   if (!ex) {
     ex = { id: uid(), name, part };
     CUSTOM_EX.push(ex);
@@ -1740,10 +1737,13 @@ function addWgerExercise(name, part) {
     renderRoutineExList();
     closeSheet('sheetExerciseSelect');
   }
+  document.getElementById('apiSearchInput').value = '';
 }
 
-document.getElementById('wgerSearchBtn').addEventListener('click', wgerSearch);
-document.getElementById('wgerSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter') wgerSearch(); });
+document.getElementById('apiSearchBtn').addEventListener('click', apiSearch);
+document.getElementById('apiSearchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') apiSearch();
+});
 
 document.getElementById('createCustomExBtn').addEventListener('click', () => {
   const name = prompt('Exercise name:');
@@ -1765,7 +1765,9 @@ document.getElementById('createCustomExBtn').addEventListener('click', () => {
 /* ══════════════════════════════════════════════════════════════════
    ACTIVE WORKOUT
 ══════════════════════════════════════════════════════════════════ */
-let _pendingWorkoutStart = undefined;
+
+// Pending routine/null for the confirmation sheet
+let _pendingWorkoutStart = undefined; // undefined = not set, null = empty, routine obj = routine
 
 document.getElementById('startEmptyBtn').addEventListener('click', () => {
   _pendingWorkoutStart = null;
@@ -1777,6 +1779,7 @@ document.getElementById('aiCoachBtn').addEventListener('click', () => openSheet(
 
 document.getElementById('confirmStartYesBtn').addEventListener('click', () => {
   closeSheets();
+  // Switch to workout tab if not already there
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector('[data-tab="workout"]').classList.add('active');
   document.body.classList.remove('history-mode','workout-mode','stats-mode');
@@ -1815,6 +1818,7 @@ function startWorkout(routine) {
 }
 
 function endWorkoutUI() {
+  // Clear interval FIRST so no more saveAW() calls race against AW=null
   clearInterval(timerInterval);
   timerInterval = null;
   stopRestTimer();
@@ -1822,16 +1826,16 @@ function endWorkoutUI() {
   document.body.classList.remove('is-active-workout');
   document.body.classList.remove('scrolling-down');
   AW = null;
-  saveAW();
+  saveAW(); // clears the AW localStorage key
   releaseWakeLock();
   document.getElementById('awTime').textContent = '00:00';
 }
 
+// Context for RPE / tag pickers
 let _rpeSet = null;
 let _tagSet = null;
 let _coachExId = null;
 
-// PREMIUM CARDLESS LIST RENDERER
 function renderAWList() {
   const list = document.getElementById('awList');
   list.innerHTML = '';
@@ -1841,88 +1845,95 @@ function renderAWList() {
   }
 
   AW.exercises.forEach((ex, exIdx) => {
-    const block = document.createElement('div');
-    block.className = 'exercise-block';
+    const card = document.createElement('div');
+    card.className = 'active-ex-card';
     const exName = getExName(ex.exId);
 
-    // Floating Header
+    // Header
     const hd = document.createElement('div');
-    hd.className = 'ex-header-floating';
+    hd.className = 'ex-header';
     hd.innerHTML = `
-      <div class="ex-title-floating">${exName}</div>
-      <div class="ex-actions-floating">
-        <button class="icon-btn-float coach coach-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
-        <button class="icon-btn-float remove ex-remove-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+        <div class="ex-title" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${exName}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+        <button class="icon-btn coach-btn" style="background:var(--accent-faded); border-color:transparent; color:var(--accent);" title="Coach">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </button>
+        <button class="ex-remove-btn" title="Remove exercise">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
     `;
     hd.querySelector('.coach-btn').addEventListener('click', () => openExerciseCoach(ex.exId, exName));
     hd.querySelector('.ex-remove-btn').addEventListener('click', () => {
       AW.exercises.splice(exIdx, 1); saveAW(); renderAWList();
     });
-    block.appendChild(hd);
+    card.appendChild(hd);
 
-    // Labels
-    const labels = document.createElement('div');
-    labels.className = 'set-labels';
-    labels.innerHTML = `
-      <div class="col-set">Set</div>
-      <div class="col-prev">Prev</div>
-      <div class="col-val">${CFG.unit}</div>
-      <div class="col-val">Reps</div>
-      <div class="col-set">RPE</div>
-      <div class="col-check"><svg width="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-    `;
-    block.appendChild(labels);
+    // Table
+    const table = document.createElement('table');
+    table.className = 'set-table';
+    table.innerHTML = `<thead><tr>
+      <th style="text-align:left; padding-left:16px;">Set</th>
+      <th>Prev</th>
+      <th>${CFG.unit}</th>
+      <th>Reps</th>
+      <th>RPE</th>
+      <th><svg width="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></th>
+    </tr></thead><tbody></tbody>`;
 
-    // Pill Rows
+    const tbody = table.querySelector('tbody');
+
     ex.sets.forEach((set, setIdx) => {
-      const row = document.createElement('div');
-      row.className = `pill-row${set.done ? ' done' : ''}`;
+      const tr = document.createElement('tr');
+      tr.className = `set-row${set.done ? ' done' : ''}`;
 
-      const tagHtml = set.tag === 'warmup'  ? '<div class="set-idx-badge" style="color:#5ac8fa; background:rgba(90,200,250,0.15);">W</div>'
-                    : set.tag === 'failure' ? '<div class="set-idx-badge" style="color:var(--danger); background:rgba(255,59,48,0.12);">F</div>'
-                    : set.tag === 'drop'    ? '<div class="set-idx-badge" style="color:#af52de; background:rgba(175,82,222,0.12);">D</div>'
-                    : `<div class="set-idx-badge">${setIdx+1}</div>`;
+      const tagHtml = set.tag === 'warmup'  ? '<span class="set-tag warmup">W</span>'
+                    : set.tag === 'failure' ? '<span class="set-tag failure">F</span>'
+                    : set.tag === 'drop'    ? '<span class="set-tag drop">D</span>'
+                    : '';
 
       const prev = getPrevSet(ex.exId, setIdx);
-      const prevHtml = prev ? `<div class="set-prev-tag" title="Tap to use previous">${prev.kg}×${prev.reps}</div>` : '<div style="color:var(--text-4); font-size:13px;">—</div>';
+      const prevLabel = prev ? `${prev.kg}×${prev.reps}` : '—';
 
-      row.innerHTML = `
-        <div class="col-set">${tagHtml}</div>
-        <div class="col-prev">${prevHtml}</div>
-        <input type="number" inputmode="decimal" class="set-input weight-in interactive" value="${set.kg !== '' ? set.kg : ''}" placeholder="—" ${set.done ? 'readonly' : ''}>
-        <input type="number" inputmode="numeric" class="set-input reps-in interactive" value="${set.reps !== '' ? set.reps : ''}" placeholder="—" ${set.done ? 'readonly' : ''}>
-        <button class="rpe-btn-prm${set.rpe ? ' has-val' : ''}">${set.rpe || '—'}</button>
-        <div class="col-check"><div class="prm-check check-toggle"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+      tr.innerHTML = `
+        <td>
+          <div class="set-num">
+            ${setIdx+1}
+            ${tagHtml}
+          </div>
+        </td>
+        <td style="text-align:center;">
+          <button class="set-prev-btn" title="Tap to use previous">${prevLabel}</button>
+        </td>
+        <td><input type="number" inputmode="decimal" class="set-input weight-in" value="${set.kg !== '' ? set.kg : ''}" placeholder="—"></td>
+        <td><input type="number" inputmode="numeric" class="set-input reps-in"   value="${set.reps !== '' ? set.reps : ''}" placeholder="—"></td>
+        <td><button class="rpe-btn${set.rpe ? ' set' : ''}">${set.rpe || '—'}</button></td>
+        <td><div class="set-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></td>
       `;
 
-      const wIn  = row.querySelector('.weight-in');
-      const rIn  = row.querySelector('.reps-in');
-      const chk  = row.querySelector('.prm-check');
-      const rpe  = row.querySelector('.rpe-btn-prm');
-      const prevBtn = row.querySelector('.set-prev-tag');
-      const numCell = row.querySelector('.col-set');
+      const wIn  = tr.querySelector('.weight-in');
+      const rIn  = tr.querySelector('.reps-in');
+      const chk  = tr.querySelector('.set-check');
+      const rpe  = tr.querySelector('.rpe-btn');
+      const prevBtn = tr.querySelector('.set-prev-btn');
+      const numCell = tr.querySelector('.set-num');
 
-      // Interactivity & Focus logic
-      wIn.addEventListener('focus', () => row.classList.add('is-focused'));
-      wIn.addEventListener('blur', () => row.classList.remove('is-focused'));
-      rIn.addEventListener('focus', () => row.classList.add('is-focused'));
-      rIn.addEventListener('blur', () => row.classList.remove('is-focused'));
-
-      if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-          if (!prev) return;
-          set.kg = prev.kg; set.reps = prev.reps;
-          wIn.value = set.kg; rIn.value = set.reps;
-          saveAW();
-        });
-      }
+      // Auto-fill from prev on tap
+      prevBtn.addEventListener('click', () => {
+        if (!prev) return;
+        set.kg = prev.kg; set.reps = prev.reps;
+        wIn.value = set.kg; rIn.value = set.reps;
+        saveAW();
+      });
 
       wIn.addEventListener('input', e => { set.kg   = parseFloat(e.target.value) || ''; saveAW(); });
       rIn.addEventListener('input', e => { set.reps = parseInt(e.target.value)   || ''; saveAW(); });
 
       rpe.addEventListener('click', () => { _rpeSet = { set, exIdx, setIdx }; openRPEPicker(); });
 
+      // Long-press set number for tag
       let tagTimer;
       numCell.addEventListener('touchstart', () => { tagTimer = setTimeout(() => { _tagSet = { set, exIdx, setIdx }; openSheet('sheetSetTag'); }, 500); }, {passive:true});
       numCell.addEventListener('touchend', () => clearTimeout(tagTimer));
@@ -1930,37 +1941,39 @@ function renderAWList() {
 
       chk.addEventListener('click', () => {
         set.done = !set.done;
-        row.classList.toggle('done', set.done);
+        tr.classList.toggle('done', set.done);
         if (set.done) {
-          wIn.setAttribute('readonly', 'true');
-          rIn.setAttribute('readonly', 'true');
           startRestTimer();
+          // Auto-add next set with prefilled values from this completed set
           if (setIdx === ex.sets.length - 1) {
+            // Prefill from this set, not from history — it's the next natural rep
             ex.sets.push({ kg: set.kg, reps: set.reps, done: false, rpe: '', tag: null });
             saveAW(); renderAWList();
             return;
           }
         } else {
-          wIn.removeAttribute('readonly');
-          rIn.removeAttribute('readonly');
+          // Uncheck — update display without re-render
+          chk.parentElement.closest('.set-row').classList.remove('done');
         }
         saveAW();
       });
 
-      block.appendChild(row);
+      tbody.appendChild(tr);
     });
 
+    card.appendChild(table);
+
     const addBtn = document.createElement('button');
-    addBtn.className = 'add-set-btn-pill';
+    addBtn.className = 'add-set-btn';
     addBtn.textContent = '+ Add Set';
     addBtn.addEventListener('click', () => {
       const last = ex.sets[ex.sets.length-1];
+      // Prefill from last set in this session, or from history if first set
       ex.sets.push({ kg: last?.kg ?? '', reps: last?.reps ?? '', done: false, rpe: '', tag: null });
       saveAW(); renderAWList();
     });
-    
-    block.appendChild(addBtn);
-    list.appendChild(block);
+    card.appendChild(addBtn);
+    list.appendChild(card);
   });
 }
 
@@ -1970,13 +1983,31 @@ document.getElementById('awAddExBtn').addEventListener('click', () => {
   openSheet('sheetExerciseSelect');
 });
 
-document.getElementById('awPlateCalcBtn').addEventListener('click', () => openSheet('sheetPlateCalc'));
-document.getElementById('awInWorkoutNoteBtn').addEventListener('click', () => {
+document.getElementById('awTitleInput').addEventListener('input', e => { if (AW) { AW.name = e.target.value; saveAW(); } });
+
+// Note
+const noteBtn = document.createElement('button');
+noteBtn.className = 'sheet-btn secondary';
+noteBtn.style.cssText = 'margin-top:4px; margin-bottom:4px; font-size:14px;';
+noteBtn.textContent = 'Workout Note';
+noteBtn.addEventListener('click', () => {
   document.getElementById('awNoteTA').value = AW?.note || '';
   openSheet('sheetWorkoutNote');
 });
+document.getElementById('awCancelTriggerBtn').before(noteBtn);
 
-document.getElementById('awTitleInput').addEventListener('input', e => { if (AW) { AW.name = e.target.value; saveAW(); } });
+document.getElementById('saveNoteBtn').addEventListener('click', () => {
+  if (AW) { AW.note = document.getElementById('awNoteTA').value; saveAW(); }
+  closeSheets(); showToast('Note saved');
+});
+
+// Plate calc
+const plateBtn = document.createElement('button');
+plateBtn.className = 'sheet-btn secondary';
+plateBtn.style.cssText = 'margin-top:0; margin-bottom:4px; font-size:14px;';
+plateBtn.textContent = 'Plate Calculator';
+plateBtn.addEventListener('click', () => openSheet('sheetPlateCalc'));
+noteBtn.before(plateBtn);
 
 // Cancel / Finish
 document.getElementById('awCancelTriggerBtn').addEventListener('click', () => openSheet('sheetConfirmCancel'));
@@ -1985,11 +2016,15 @@ document.getElementById('confirmCancelYesBtn').addEventListener('click', () => {
 
 document.getElementById('awFinishBtn').addEventListener('click', () => {
   if (!AW) return;
+  // Count completed sets for summary
   const completedExs = AW.exercises.map(ex => ({
     ...ex, sets: ex.sets.filter(s => s.done)
   })).filter(ex => ex.sets.length > 0);
 
-  if (!completedExs.length) { endWorkoutUI(); return; }
+  if (!completedExs.length) {
+    // Nothing logged — just bail
+    endWorkoutUI(); return;
+  }
 
   const totalSets = completedExs.reduce((n, ex) => n + ex.sets.length, 0);
   let vol = 0;
@@ -1998,6 +2033,7 @@ document.getElementById('awFinishBtn').addEventListener('click', () => {
   document.getElementById('finishSummary').textContent =
     `${mins} min · ${completedExs.length} exercise${completedExs.length!==1?'s':''} · ${totalSets} sets · ${vol.toLocaleString()} ${CFG.unit}`;
 
+  // Show save-as-routine option, pre-fill name
   document.getElementById('saveAsRoutineCheck').checked = false;
   document.getElementById('saveAsRoutineWrap').style.display = 'none';
   document.getElementById('saveAsRoutineNameInput').value = AW.name;
@@ -2008,31 +2044,19 @@ document.getElementById('awFinishBtn').addEventListener('click', () => {
 document.getElementById('saveAsRoutineCheck').addEventListener('change', e => {
   document.getElementById('saveAsRoutineWrap').style.display = e.target.checked ? 'block' : 'none';
 });
+
 document.getElementById('confirmFinishNoBtn').addEventListener('click', closeSheets);
-
-document.getElementById('awNoteTriggerBtn').addEventListener('click', () => {
-  document.getElementById('awNoteTA').value = AW?.note || '';
-  closeSheet('sheetConfirmFinish'); // close finish sheet temporarily to show note sheet
-  setTimeout(() => openSheet('sheetWorkoutNote'), 350); 
-});
-
-document.getElementById('saveNoteBtn').addEventListener('click', () => {
-  if (AW) { AW.note = document.getElementById('awNoteTA').value; saveAW(); }
-  closeSheet('sheetWorkoutNote');
-  // Re-open finish sheet after saving note
-  if (document.body.classList.contains('is-active-workout')) {
-      setTimeout(() => openSheet('sheetConfirmFinish'), 350);
-  }
-});
 
 document.getElementById('confirmFinishYesBtn').addEventListener('click', async () => {
   if (!AW) { closeSheets(); return; }
+  // Strip incomplete sets
   AW.exercises.forEach(ex => { ex.sets = ex.sets.filter(s => s.done); });
   AW.exercises = AW.exercises.filter(ex => ex.sets.length > 0);
   if (!AW.exercises.length) { showToast('No completed sets to save'); endWorkoutUI(); closeSheets(); return; }
   AW.name    = document.getElementById('awTitleInput').value || 'Workout';
   AW.endTime = Date.now();
 
+  // Save as routine if checked
   if (document.getElementById('saveAsRoutineCheck').checked) {
     const rName = document.getElementById('saveAsRoutineNameInput').value.trim() || AW.name;
     const r = {
@@ -2063,6 +2087,7 @@ const RPE_DESC = {
   8:'Moderate — 2 reps in reserve', 8.5:'Hard — 1–2 reps in reserve',
   9:'Very hard — 1 rep left', 9.5:'Near maximal — maybe 1 more', 10:'True max effort'
 };
+
 function openRPEPicker() {
   const grid = document.getElementById('rpeGrid');
   grid.innerHTML = '';
@@ -2133,22 +2158,32 @@ function scheduleSWNotification(delayMs) {
   if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
   if (Notification.permission !== 'granted') return;
   navigator.serviceWorker.controller.postMessage({
-    type: 'SCHEDULE_NOTIFICATION', delayMs, title: 'Rest complete', body: 'Start your next set.'
+    type: 'SCHEDULE_NOTIFICATION',
+    delayMs,
+    title: 'Rest complete',
+    body: 'Start your next set.'
   });
 }
+
 function cancelSWNotification() {
   if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return;
   navigator.serviceWorker.controller.postMessage({ type: 'CANCEL_NOTIFICATION' });
 }
 
+let restEndTime = 0;
+
 function startRestTimer() {
   restEndTime = Date.now() + (CFG.restDuration * 1000);
   restWrap.style.display = 'flex';
   if (restTimerInterval) clearInterval(restTimerInterval);
+  
   updateRestUI();
   scheduleSWNotification(CFG.restDuration * 1000);
+  
   restTimerInterval = setInterval(() => {
+    // Calculate remaining time based on the absolute clock
     restTimeRemaining = Math.ceil((restEndTime - Date.now()) / 1000);
+    
     if (restTimeRemaining <= 0) {
         restTimeRemaining = 0; 
         stopRestTimer();
@@ -2168,11 +2203,14 @@ function updateRestUI() {
   const s = restTimeRemaining%60;
   restDisp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
+
 document.getElementById('restCancelBtn').addEventListener('click', stopRestTimer);
 document.getElementById('restAddBtn').addEventListener('click', () => {
-  restEndTime += 30000;
+  restEndTime += 30000; // Add 30 seconds to the absolute end time
   restTimeRemaining = Math.ceil((restEndTime - Date.now()) / 1000);
   updateRestUI();
+  
+  // Re-schedule notification 
   cancelSWNotification();
   scheduleSWNotification(restTimeRemaining * 1000);
 });
@@ -2319,23 +2357,11 @@ function populate1RMSelect() {
   const prev = sel.value;
   sel.innerHTML = '';
   const counts = {};
-  
-  // Find all exercises that have ever been performed in the history
-  WORKOUTS.forEach(w => w.exercises.forEach(ex => { counts[ex.exId]=true; }));
-  
-  // Sort them alphabetically by exercise name
-  const sorted = Object.keys(counts).sort((a,b) => getExName(a).localeCompare(getExName(b)));
-  
+  WORKOUTS.forEach(w => w.exercises.forEach(ex => { counts[ex.exId]=(counts[ex.exId]||0)+1; }));
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
   if (!sorted.length) { sel.innerHTML='<option>No data</option>'; return; }
-  
-  sorted.forEach(id => { 
-      const o=document.createElement('option'); 
-      o.value=id; 
-      o.textContent=getExName(id).replace(/\(.*?\)/g,'').trim(); 
-      sel.appendChild(o); 
-  });
-  
-  if (prev && counts[prev]) sel.value=prev;
+  sorted.forEach(([id])=>{ const o=document.createElement('option'); o.value=id; o.textContent=getExName(id).replace(/\(.*?\)/g,'').trim(); sel.appendChild(o); });
+  if (prev) sel.value=prev;
   sel.onchange = render1RMChart;
 }
 
@@ -2379,18 +2405,55 @@ async function boot() {
   try {
     db = await openDB();
     [WORKOUTS, ROUTINES, CUSTOM_EX] = await Promise.all([
-      idbGetAll('workouts'), idbGetAll('routines'), idbGetAll('customEx')
+      idbGetAll('workouts'),
+      idbGetAll('routines'),
+      idbGetAll('customEx'),
     ]);
-  } catch(e) { console.warn('IDB unavailable:', e); }
+  } catch(e) {
+    // IDB unavailable (private browsing on some browsers) — graceful degradation
+    console.warn('IDB unavailable, falling back to in-memory only:', e);
+  }
+  
+  // --- STATIC DATABASE FETCH ---
+  try {
+    const res = await fetch('./exercises.json');
+    if (res.ok) {
+      const data = await res.json();
+      const newExs = [];
+      data.forEach(ex => {
+        // Only add if it doesn't already exist in our defaults OR custom library
+        if (!DEFAULT_EXERCISES.some(d => normalizeExName(d.name) === normalizeExName(ex.name)) &&
+            !CUSTOM_EX.some(c => normalizeExName(c.name) === normalizeExName(ex.name))) {
+          const bp = (ex.bodyPart || '').toLowerCase();
+          let part = 'Other';
+          if (bp.includes('chest')) part = 'Chest';
+          else if (bp.includes('back')) part = 'Back';
+          else if (bp.includes('leg') || bp.includes('calves')) part = 'Legs';
+          else if (bp.includes('arm')) part = 'Arms';
+          else if (bp.includes('shoulder')) part = 'Shoulders';
+          else if (bp.includes('waist') || bp.includes('core')) part = 'Core';
+          
+          newExs.push({ id: uid(), name: ex.name.charAt(0).toUpperCase() + ex.name.slice(1), part });
+        }
+      });
+      DEFAULT_EXERCISES.push(...newExs);
+    }
+  } catch(e) {
+    console.log('Running offline or static DB unreachable. Using standard defaults.');
+  }
+  // -----------------------------
 
+  // Seed default routines if IDB was empty
   if (!ROUTINES.length) {
     ROUTINES = DEFAULT_ROUTINES.map(r => ({...r, exercises: r.exercises.map(e => ({...e}))}));
     if (db) for (const r of ROUTINES) await idbPut('routines', r);
   } else {
+    // Migrate any old routines that used string[] format
     ROUTINES = ROUTINES.map(r => normalizeRoutine(r));
-    if (db) for (const r of ROUTINES) await idbPut('routines', r);
+    if (db) for (const r of ROUTINES) await idbPut('routines', r); // re-save normalized
   }
 
+  // Seed demo workout if completely fresh
   if (!WORKOUTS.length) {
     const demo = {
       id: uid(), name: 'Push Day',
@@ -2405,6 +2468,7 @@ async function boot() {
     if (db) await idbPut('workouts', demo);
   }
 
+  // Restore crashed workout
   const savedAW = loadAW();
   if (savedAW) {
     AW = savedAW;
