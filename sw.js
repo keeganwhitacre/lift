@@ -5,9 +5,16 @@
       This works around the fact that Notification API requires a SW context
       to show persistent notifications on mobile.
 */
+// Bump this version (e.g., from v2 to v3) so the browser updates the cache!
+const CACHE = 'lift-v3'; 
 
-const CACHE = 'lift-v1';
-const SHELL = ['./'];
+// Add exercises.json, plus your manifest and icon so it works 100% offline
+const SHELL = [
+  './',
+  './exercises.json',
+  './manifest.json',
+  './icon-192.png'
+];
 
 /* ── Install: cache app shell ── */
 self.addEventListener('install', e => {
