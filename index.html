@@ -1292,6 +1292,16 @@ function loadAW() {
    HELPERS
 ══════════════════════════════════════════════════════════════════ */
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+   function stableId(name) {
+  let h = 5381;
+  for (let i = 0; i < name.length; i++) {
+    h = ((h << 5) + h) ^ name.charCodeAt(i);
+    h = h >>> 0;
+  }
+  return 'ex_' + h.toString(36);
+}
+   
 function getEx(id) { return [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => e.id === id); }
 function getExName(id) { return getEx(id)?.name || 'Unknown'; }
 function epley(w, r) { return r === 1 ? w : Math.round(w * (1 + r/30)); }
@@ -1633,7 +1643,7 @@ function parseStrongCSV(csv) {
       startTime: ts, endTime: ts + 3600000, note: '',
       exercises: Object.entries(w.exercises).map(([name, sets]) => {
         let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => normalizeExName(e.name) === normalizeExName(name));
-        if (!ex) { ex = { id: uid(), name, part: 'Other' }; CUSTOM_EX.push(ex); idbPut('customEx', ex); }
+       if (!ex) { ex = { id: stableId(name), name, part: 'Other' }; CUSTOM_EX.push(ex); idbPut('customEx', ex); }
         return { exId: ex.id, sets };
       })
     };
@@ -2140,10 +2150,10 @@ async function apiSearch() {
 function addApiExercise(name, part) {
   let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(e => normalizeExName(e.name) === normalizeExName(name));
   if (!ex) {
-    ex = { id: uid(), name, part };
-    CUSTOM_EX.push(ex);
-    if (db) idbPut('customEx', ex);
-  }
+  ex = { id: stableId(name), name, part };
+  CUSTOM_EX.push(ex);
+  if (db) idbPut('customEx', ex);
+}
   if (_exSelectMode === 'workout' && AW) {
     AW.exercises.push({ exId: ex.id, sets: [mkSet(ex.id, 0)], supersetId: null, restDur: null });
     saveAW(); renderAWList();
@@ -3311,7 +3321,8 @@ async function boot() {
           else if (bp.includes('shoulder')) part = 'Shoulders';
           else if (bp.includes('waist') || bp.includes('core')) part = 'Core';
           
-          newExs.push({ id: uid(), name: ex.name.charAt(0).toUpperCase() + ex.name.slice(1), part });
+          const stableName = ex.name.charAt(0).toUpperCase() + ex.name.slice(1);
+         newExs.push({ id: stableId(stableName), name: stableName, part });
         }
       });
       DEFAULT_EXERCISES.push(...newExs);
