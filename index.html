@@ -2038,8 +2038,8 @@ function renderExSelect() {
     row.addEventListener('click', () => {
       if (_exSelectMode === 'workout' && AW) {
         AW.exercises.push({ exId: e.id, sets: [mkSet(e.id, 0)], supersetId: null, restDur: null });
-        saveAW(); renderAWList(); closeSheets();
-        document.getElementById('exSearchInput').value = '';
+        saveAW(); renderAWList(); 
+        showToast(`Added ${e.name}`); // Keep sheet open, just show toast
       } else if (_exSelectMode === 'swap' && AW && _swapExIdx !== null) {
         AW.exercises[_swapExIdx].exId = e.id;
         saveAW(); renderAWList(); closeSheets();
@@ -2051,8 +2051,7 @@ function renderExSelect() {
       } else if (_exSelectMode === 'routine') {
         _editingRoutineExercises.push({ exId: e.id, sets: 3, restDur: null });
         renderRoutineExList();
-        closeSheet('sheetExerciseSelect');
-        document.getElementById('exSearchInput').value = '';
+        showToast(`Added ${e.name}`); // Keep sheet open
       } else if (_exSelectMode === 'statsChart') {
         _chartExId = e.id;
         updateChartExBtn(); render1RMChart(); closeSheets();
@@ -2147,7 +2146,8 @@ function addApiExercise(name, part) {
   }
   if (_exSelectMode === 'workout' && AW) {
     AW.exercises.push({ exId: ex.id, sets: [mkSet(ex.id, 0)], supersetId: null, restDur: null });
-    saveAW(); renderAWList(); closeSheets();
+    saveAW(); renderAWList();
+    showToast(`Added ${name}`);
   } else if (_exSelectMode === 'swap' && AW && _swapExIdx !== null) {
     AW.exercises[_swapExIdx].exId = ex.id;
     saveAW(); renderAWList(); closeSheets();
@@ -2156,7 +2156,8 @@ function addApiExercise(name, part) {
     renderRoutineExList(); closeSheet('sheetExerciseSelect');
   } else if (_exSelectMode === 'routine') {
     _editingRoutineExercises.push({ exId: ex.id, sets: 3, restDur: null });
-    renderRoutineExList(); closeSheet('sheetExerciseSelect');
+    renderRoutineExList();
+    showToast(`Added ${name}`);
   } else if (_exSelectMode === 'statsChart') {
     _chartExId = ex.id; updateChartExBtn(); render1RMChart(); closeSheets();
   } else if (_exSelectMode === 'trackBest') {
@@ -3280,9 +3281,15 @@ async function boot() {
 
   try {
     db = await openDB();
-    const w = await idbGetAll('workouts'); if (w) WORKOUTS = w;
-    const r = await idbGetAll('routines'); if (r) ROUTINES = r;
-    const c = await idbGetAll('customEx'); if (c) CUSTOM_EX = c;
+    // Use Promise.all to ensure all data is loaded before rendering anything
+    const [w, r, c] = await Promise.all([
+      idbGetAll('workouts'),
+      idbGetAll('routines'),
+      idbGetAll('customEx')
+    ]);
+    if (w) WORKOUTS = w;
+    if (r) ROUTINES = r;
+    if (c) CUSTOM_EX = c;
   } catch(e) {
     console.warn('IDB unavailable, falling back to in-memory only:', e);
   }
