@@ -374,6 +374,11 @@
       background: var(--bg-input); transform: scale(1.02);
       box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-color: var(--border-focus);
       z-index: 10; position: relative;
+      animation: highlightActive 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes highlightActive {
+      0% { background: transparent; transform: scale(1); border-color: transparent; box-shadow: none; }
+      100% { background: var(--bg-input); transform: scale(1.02); border-color: var(--border-focus); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
     }
     .pill-row.active-set .set-input { background: var(--bg-active-pill); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
     
@@ -391,7 +396,7 @@
       50% { transform: scale(1.3); }
       100% { transform: scale(1); }
     }
-    .pill-row.done .prm-check svg { animation: popCheck 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .pill-row.just-done .prm-check svg { animation: popCheck 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
     /* ── INPUTS & BADGES ── */
     .set-idx-badge {
@@ -667,7 +672,7 @@
         </div>
 
         <button id="awSuggestFinisherBtn" style="display:flex; align-items:center; justify-content:center; gap:8px; width:calc(100% - 32px); margin:0 auto 16px; padding:18px; border-radius:100px; border:1.5px dashed var(--accent); background:var(--accent-faded); color:var(--accent); font-size:16px; font-weight:700; cursor:pointer; font-family:inherit; transition:0.15s;">
-           ✨ Suggest Finisher
+           <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Ask Coach for Finisher
         </button>
 
         <button id="awCancelTriggerBtn" style="display:flex; align-items:center; justify-content:center; width:calc(100% - 32px); margin:0 auto 32px; padding:18px; border-radius:100px; border:none; background:rgba(255,59,48,0.1); color:var(--danger); font-size:16px; font-weight:700; cursor:pointer; transition:0.15s; font-family:inherit;">Cancel Workout</button>
@@ -873,6 +878,31 @@
   </div>
   <button class="sheet-btn danger" id="confirmDeleteExYesBtn">Remove Exercise</button>
   <button class="sheet-btn secondary" id="confirmDeleteExNoBtn">Cancel</button>
+</div>
+
+<!-- EXERCISE OPTIONS -->
+<div class="sheet" id="sheetExerciseOptions">
+  <div class="handle"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;" id="exoTitle">Options</div>
+    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  
+  <button class="sheet-btn secondary" id="exoRestBtn" style="justify-content:flex-start;">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Rest Timer Override
+  </button>
+  
+  <button class="sheet-btn secondary" id="exoLinkBtn" style="justify-content:flex-start;">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg> Superset with Previous
+  </button>
+
+  <button class="sheet-btn secondary" id="exoSwapBtn" style="justify-content:flex-start;">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg> Replace Exercise
+  </button>
+
+  <button class="sheet-btn danger" id="exoRemoveBtn" style="justify-content:flex-start; margin-top:24px;">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Remove Exercise
+  </button>
 </div>
 
 <!-- REORDER EXERCISES -->
@@ -2220,9 +2250,11 @@ let _rpeSet = null;
 let _tagSet = null;
 let _coachExId = null;
 let _coachExIdx = null; // Map AI back to exact exercise
+let _optionsExIdx = null;
 let _swapExIdx = null;
 let _deleteExIdx = null;
 let _summaryData = null; // For passing to AI analyzer
+let _lastToggledSet = null; // For pop animation isolation
 
 function renderAWList() {
   const list = document.getElementById('awList');
@@ -2296,46 +2328,24 @@ function renderAWList() {
     hd.innerHTML = `
       <div class="ex-title-floating">${exName}</div>
       <div class="ex-actions-floating">
-        <button class="icon-btn-float rest-cfg-btn" title="Rest Timer Override"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
-        ${exIdx > 0 ? `<button class="icon-btn-float link-btn ${isLinkedUp ? 'active' : ''}" title="Superset with previous"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></button>` : ''}
-        <button class="icon-btn-float swap-btn" title="Replace exercise"><svg viewBox="0 0 24 24"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg></button>
         <button class="icon-btn-float coach-btn" title="Coach"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
-        <button class="icon-btn-float remove-btn" title="Remove exercise"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        <button class="icon-btn-float options-btn" title="Options"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
       </div>
     `;
-    
-    hd.querySelector('.rest-cfg-btn').addEventListener('click', () => {
-      const val = prompt('Set specific rest duration (seconds) for this exercise:', ex.restDur || CFG.restDuration);
-      if (val && !isNaN(val)) { ex.restDur = parseInt(val); saveAW(); renderAWList(); }
-    });
 
-    if (exIdx > 0) {
-      hd.querySelector('.link-btn').addEventListener('click', () => {
-        if (isLinkedUp) {
-          ex.supersetId = null;
-        } else {
-          if (!prevEx.supersetId) prevEx.supersetId = uid();
-          ex.supersetId = prevEx.supersetId;
-        }
-        saveAW(); renderAWList();
-      });
-    }
-
-    hd.querySelector('.swap-btn').addEventListener('click', () => {
-      _swapExIdx = exIdx;
-      _exSelectMode = 'swap';
-      document.getElementById('exSearchInput').value = '';
-      renderExSelect();
-      openSheet('sheetExerciseSelect');
-    });
     hd.querySelector('.coach-btn').addEventListener('click', () => {
       _coachExIdx = exIdx;
       openExerciseCoach(ex.exId, exName);
     });
-    hd.querySelector('.remove-btn').addEventListener('click', () => {
-      _deleteExIdx = exIdx;
-      openSheet('sheetConfirmDeleteEx');
+
+    hd.querySelector('.options-btn').addEventListener('click', () => {
+      _optionsExIdx = exIdx;
+      document.getElementById('exoTitle').textContent = exName;
+      document.getElementById('exoLinkBtn').style.display = exIdx > 0 ? 'flex' : 'none';
+      document.getElementById('exoLinkBtn').style.color = isLinkedUp ? 'var(--accent)' : 'var(--text-1)';
+      openSheet('sheetExerciseOptions');
     });
+    
     block.appendChild(hd);
 
     // Labels
@@ -2355,6 +2365,9 @@ function renderAWList() {
       let rowClass = 'pill-row';
       if (set.done) {
         rowClass += ' done';
+        if (_lastToggledSet && _lastToggledSet.exIdx === exIdx && _lastToggledSet.setIdx === setIdx && _lastToggledSet.done) {
+           rowClass += ' just-done';
+        }
       } else if (activeSetByExercise.get(exIdx) === setIdx) {
         rowClass += ' active-set';
       }
@@ -2450,6 +2463,7 @@ function renderAWList() {
           }
         }
         set.done = !set.done;
+        _lastToggledSet = { exIdx, setIdx, done: set.done };
         saveAW(); 
         if (set.done && CFG.autoRest !== false) {
           startRestTimer(ex.restDur || CFG.restDuration);
@@ -2509,6 +2523,45 @@ function renderReorderList() {
     list.appendChild(row);
   });
 }
+
+// Exercise Options Handlers
+document.getElementById('exoRestBtn').addEventListener('click', () => {
+  if (_optionsExIdx === null || !AW) return;
+  const ex = AW.exercises[_optionsExIdx];
+  const val = prompt('Set specific rest duration (seconds) for this exercise:', ex.restDur || CFG.restDuration);
+  if (val && !isNaN(val)) { ex.restDur = parseInt(val); saveAW(); renderAWList(); }
+  closeSheets();
+});
+
+document.getElementById('exoLinkBtn').addEventListener('click', () => {
+  if (_optionsExIdx === null || _optionsExIdx === 0 || !AW) return;
+  const ex = AW.exercises[_optionsExIdx];
+  const prevEx = AW.exercises[_optionsExIdx - 1];
+  let isLinkedUp = (ex.supersetId && prevEx && prevEx.supersetId === ex.supersetId);
+  
+  if (isLinkedUp) {
+    ex.supersetId = null;
+  } else {
+    if (!prevEx.supersetId) prevEx.supersetId = uid();
+    ex.supersetId = prevEx.supersetId;
+  }
+  saveAW(); renderAWList(); closeSheets();
+});
+
+document.getElementById('exoSwapBtn').addEventListener('click', () => {
+  if (_optionsExIdx === null) return;
+  _swapExIdx = _optionsExIdx;
+  _exSelectMode = 'swap';
+  document.getElementById('exSearchInput').value = '';
+  renderExSelect();
+  openSheet('sheetExerciseSelect');
+});
+
+document.getElementById('exoRemoveBtn').addEventListener('click', () => {
+  if (_optionsExIdx === null) return;
+  _deleteExIdx = _optionsExIdx;
+  openSheet('sheetConfirmDeleteEx');
+});
 
 document.getElementById('confirmDeleteExYesBtn').addEventListener('click', () => {
   if (_deleteExIdx !== null && AW) {
@@ -2640,7 +2693,7 @@ document.getElementById('awSuggestFinisherBtn').addEventListener('click', () => 
   document.getElementById('awSuggestFinisherBtn').innerHTML = `<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>`;
   
   callGeminiJSON(prompt).then(data => {
-    document.getElementById('awSuggestFinisherBtn').innerHTML = `✨ Suggest Finisher`;
+    document.getElementById('awSuggestFinisherBtn').innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Ask Coach for Finisher`;
     let ex = [...DEFAULT_EXERCISES, ...CUSTOM_EX].find(x => normalizeExName(x.name) === normalizeExName(data.finisherExName));
     if (!ex) {
        ex = { id: uid(), name: data.finisherExName, part: 'Other' };
@@ -2657,7 +2710,7 @@ document.getElementById('awSuggestFinisherBtn').addEventListener('click', () => 
     renderAWList();
     showToast(`Added: ${data.reason}`);
   }).catch(e => {
-    document.getElementById('awSuggestFinisherBtn').innerHTML = `✨ Suggest Finisher`;
+    document.getElementById('awSuggestFinisherBtn').innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Ask Coach for Finisher`;
     showToast('Failed to get suggestion');
   });
 });
@@ -2814,7 +2867,7 @@ async function callGemini(prompt, outputEl) {
   const profile = CFG.athleteProfile ? `\n\n## Athlete Profile\n${CFG.athleteProfile}` : '';
   const full = `${COACH_SYS}${profile}\n\n## Training History\n${history}\n\nUnit: ${CFG.unit}\n\n## Request\n${prompt}`;
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ contents:[{ parts:[{text:full}] }] })
     });
@@ -2864,7 +2917,7 @@ async function generateRoutineAI(req) {
   const fullContext = `${profile}\n\n## Training History\n${history}\n\nUnit: ${CFG.unit}\n\n## Request\n${prompt}`;
   
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         contents:[{ parts:[{text:fullContext}] }],
