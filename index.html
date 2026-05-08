@@ -852,7 +852,9 @@
     <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
   </div>
   <div style="font-size:14px; color:var(--text-3); margin-bottom:24px;" id="hdSub"></div>
-  
+   <button class="sheet-btn secondary" id="hdSaveRoutineBtn" style="flex-shrink:0; margin-bottom:8px;">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save as Routine
+  </button>
   <div id="hdExList" style="flex:1; overflow-y:auto; margin-bottom:16px; font-size:15px; line-height:1.6; color:var(--text-2);"></div>
   
   <button class="sheet-btn danger" id="hdDeleteBtn" style="flex-shrink:0;">Delete Workout</button>
@@ -867,17 +869,6 @@
   </div>
   <button class="sheet-btn danger" id="confirmCancelYesBtn">Discard Workout</button>
   <button class="sheet-btn secondary" id="confirmCancelNoBtn">Resume</button>
-</div>
-
-<!-- CONFIRM DELETE EXERCISE -->
-<div class="sheet" id="sheetConfirmDeleteEx">
-  <div class="handle"></div>
-  <div style="text-align:center; margin-bottom:24px;">
-    <div style="font-size:18px; font-weight:700; margin-bottom:8px;">Remove Exercise?</div>
-    <div style="font-size:14px; color:var(--text-3);">This will delete the exercise and its sets from the current workout.</div>
-  </div>
-  <button class="sheet-btn danger" id="confirmDeleteExYesBtn">Remove Exercise</button>
-  <button class="sheet-btn secondary" id="confirmDeleteExNoBtn">Cancel</button>
 </div>
 
 <!-- EXERCISE OPTIONS -->
@@ -903,6 +894,17 @@
   <button class="sheet-btn danger" id="exoRemoveBtn" style="justify-content:flex-start; margin-top:24px;">
       <svg viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Remove Exercise
   </button>
+</div>
+
+   <!-- CONFIRM DELETE EXERCISE -->
+<div class="sheet" id="sheetConfirmDeleteEx">
+  <div class="handle"></div>
+  <div style="text-align:center; margin-bottom:24px;">
+    <div style="font-size:18px; font-weight:700; margin-bottom:8px;">Remove Exercise?</div>
+    <div style="font-size:14px; color:var(--text-3);">This will delete the exercise and its sets from the current workout.</div>
+  </div>
+  <button class="sheet-btn danger" id="confirmDeleteExYesBtn">Remove Exercise</button>
+  <button class="sheet-btn secondary" id="confirmDeleteExNoBtn">Cancel</button>
 </div>
 
 <!-- REORDER EXERCISES -->
@@ -1759,6 +1761,27 @@ function openHistoryDetail(workoutId) {
   
   openSheet('sheetHistoryDetail');
 }
+
+   document.getElementById('hdSaveRoutineBtn').addEventListener('click', () => {
+    const w = WORKOUTS.find(x => x.id === _viewingHistoryId);
+    if (!w) return;
+    
+    // Map workout exercises to routine format
+    _editingRoutineExercises = w.exercises.map(ex => ({
+        exId: ex.exId,
+        sets: ex.sets.length,
+        restDur: ex.restDur || null
+    }));
+    
+    _editingRoutineId = null; // New routine
+    document.getElementById('routineEditorTitle').textContent = 'New Routine from History';
+    document.getElementById('routineNameInput').value = w.name;
+    document.getElementById('deleteRoutineBtn').style.display = 'none';
+    
+    renderRoutineExList();
+    closeSheet('sheetHistoryDetail');
+    openSheet('sheetRoutineEditor');
+});
 
 document.getElementById('hdDeleteBtn').addEventListener('click', async () => {
   if (!_viewingHistoryId) return;
