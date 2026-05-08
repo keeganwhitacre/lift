@@ -2358,6 +2358,16 @@ function renderAWList() {
       } else if (activeSetByExercise.get(exIdx) === setIdx) {
         rowClass += ' active-set';
       }
+
+      // Compute cascading placeholders for empty sets
+      let computedPlaceholderKg = ex.suggestedKg || '—';
+      let computedPlaceholderReps = ex.suggestedReps || '—';
+      for (let j = setIdx - 1; j >= 0; j--) {
+        if (ex.sets[j].kg !== '') { computedPlaceholderKg = ex.sets[j].kg; break; }
+      }
+      for (let j = setIdx - 1; j >= 0; j--) {
+        if (ex.sets[j].reps !== '') { computedPlaceholderReps = ex.sets[j].reps; break; }
+      }
       
       const row = document.createElement('div');
       row.className = rowClass;
@@ -2373,8 +2383,8 @@ function renderAWList() {
       row.innerHTML = `
         <div class="col-set">${tagHtml}</div>
         <div class="col-prev">${prevHtml}</div>
-        <div class="col-val"><input type="number" inputmode="decimal" class="set-input weight-in interactive" value="${set.kg !== '' ? set.kg : ''}" placeholder="${ex.suggestedKg || '—'}" onfocus="this.select()"></div>
-        <div class="col-val"><input type="number" inputmode="numeric" class="set-input reps-in interactive" value="${set.reps !== '' ? set.reps : ''}" placeholder="${ex.suggestedReps || '—'}" onfocus="this.select()"></div>
+        <div class="col-val"><input type="number" inputmode="decimal" class="set-input weight-in interactive" value="${set.kg !== '' ? set.kg : ''}" placeholder="${computedPlaceholderKg}" onfocus="this.select()"></div>
+        <div class="col-val"><input type="number" inputmode="numeric" class="set-input reps-in interactive" value="${set.reps !== '' ? set.reps : ''}" placeholder="${computedPlaceholderReps}" onfocus="this.select()"></div>
         <div class="col-rpe"><button class="rpe-btn-prm${set.rpe ? ' has-val' : ''}">${set.rpe || '—'}</button></div>
         <div class="col-check"><div class="prm-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
       `;
@@ -2428,6 +2438,17 @@ function renderAWList() {
       numCell.addEventListener('contextmenu', e => { e.preventDefault(); _tagSet = { set, exIdx, setIdx }; openSheet('sheetSetTag'); });
 
       chk.addEventListener('click', () => {
+        if (!set.done) {
+          // If checking the box and values are empty, pull in the ghost text
+          if (set.kg === '' && wIn.placeholder && wIn.placeholder !== '—') {
+            const pKg = parseFloat(wIn.placeholder);
+            if (!isNaN(pKg)) set.kg = pKg;
+          }
+          if (set.reps === '' && rIn.placeholder && rIn.placeholder !== '—') {
+            const pReps = parseInt(rIn.placeholder);
+            if (!isNaN(pReps)) set.reps = pReps;
+          }
+        }
         set.done = !set.done;
         saveAW(); 
         if (set.done && CFG.autoRest !== false) {
@@ -2810,7 +2831,7 @@ async function callGeminiJSON(prompt) {
   const profile = CFG.athleteProfile ? `\n\n## Athlete Profile\n${CFG.athleteProfile}` : '';
   const full = `${COACH_SYS}${profile}\n\n## Training History\n${history}\n\nUnit: ${CFG.unit}\n\n## Request\n${prompt}`;
   
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
        contents:[{ parts:[{text:full}] }],
