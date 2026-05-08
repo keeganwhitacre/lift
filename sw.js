@@ -6,7 +6,7 @@
       to show persistent notifications on mobile.
 */
 // Bump this version (e.g., from v2 to v3) so the browser updates the cache!
-const CACHE = 'lift-v10'; 
+const CACHE = 'lift-v11'; 
 
 // Add exercises.json, plus your manifest and icon so it works 100% offline
 const SHELL = [
