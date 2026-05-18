@@ -2040,6 +2040,23 @@ document.getElementById('analyzeRoutineBtn').addEventListener('click', async () 
   const routineName = document.getElementById('routineNameInput').value.trim() || 'Untitled Routine';
   const exList = _editingRoutineExercises.map(e => `${getExName(e.exId)} (${e.sets} sets)`).join('; ');
  
+  // Build a summary of OTHER routines so the analyzer knows what
+  // else is in the user's weekly split. Excludes the routine being
+  // edited (by id, or — if this is a new unsaved routine — by exact name match).
+  const otherRoutines = ROUTINES.filter(r => {
+    if (_editingRoutineId && r.id === _editingRoutineId) return false;
+    if (!_editingRoutineId && r.name === routineName) return false;
+    return true;
+  });
+  const otherRoutinesContext = otherRoutines.length
+    ? otherRoutines.map(r => {
+        const exs = (r.exercises || []).map(e =>
+          `${getExName(e.exId)} (${e.sets || 3}s)`
+        ).join(', ');
+        return `  ${r.name}: ${exs}`;
+      }).join('\n')
+    : '  (no other routines defined)';
+ 
   const schema = {
     type: "OBJECT",
     properties: {
@@ -2057,12 +2074,17 @@ document.getElementById('analyzeRoutineBtn').addEventListener('click', async () 
   const prompt = `Analyze this routine the user is building: "${routineName}".
 Exercises in order: ${exList}.
  
+THE USER'S OTHER ROUTINES (do NOT suggest exercises that overlap with these — assume they hit this stimulus on other days):
+${otherRoutinesContext}
+ 
+Some users runs a multi-day split. Routines with similar names (Push A / Push B, Pull A / Pull B, etc.) are intentional variants that together cover that movement pattern across the week. When evaluating gaps, only flag stimulus that is missing from the user's ENTIRE weekly split, not just from this single routine. When suggesting additions, never recommend an exercise that already appears in another routine listed above — pick a complementary variant instead.
+ 
 Evaluate against the user's training history. Identify:
-- One sentence verdict on overall quality and fit.
-- Strengths: what this routine does well (max 3 items, short phrases).
-- Gaps: movement patterns, muscle groups, or stimulus types missing or underdosed (max 3 items, short phrases).
-- Redundancies: exercises that overlap too much in stimulus (max 3 items, short phrases). Empty array if none.
-- Suggested additions: specific exercises to add and why (max 3 items, "Exercise name - one-sentence reason" format).
+- One sentence verdict on overall quality and fit, considering this routine's role within the broader split.
+- Strengths: what this routine does well in the context of the split (max 3 items, short phrases).
+- Gaps: movement patterns, muscle groups, or stimulus types missing from the WHOLE split, not just this routine (max 3 items, short phrases).
+- Redundancies: exercises that overlap too much in stimulus WITHIN this routine, or that duplicate work already done in another routine in the split (max 3 items, short phrases). Empty array if none.
+- Suggested additions: specific exercises to add and why (max 3 items, "Exercise name - one-sentence reason" format). Must not duplicate exercises in the other routines listed.
 - Estimated session time in minutes assuming standard rest.
 - Estimated total volume (in ${CFG.unit}) based on the user's recent typical weights for these exercises. Omit if unknown.
  
@@ -3289,14 +3311,28 @@ document.getElementById('coachActionChips').addEventListener('click', e => {
  
       const prompt = `Recommend a working weight and target rep range for the user's next set of ${exName}.
  
-Apply these rules:
-- Goal is hypertrophy unless the athlete profile says otherwise. Target rep range 8-12 by default.
-- If the exercise is STALLED (see context), drop weight 10-15 percent to hit the upper end of the rep range, OR shift to a higher rep range (12-15). Pick one and explain.
-- If recent top-set RPEs are 8 or below and they hit the top of the rep range, suggest a small weight increase (2.5-5 percent).
-- If recent top-set RPEs are 9.5+ consistently, suggest the same weight, do not push.
-- Use specific numbers from the focus exercise context. Do not generalize.
+Step 1 — Infer the intended rep scheme for this lift from the FOCUS EXERCISE context. Look at "Recent rep range" and the actual reps in the last session.
+  - If reps consistently 1-5: this is a strength scheme. Stay in 3-6 rep range.
+  - If reps consistently 6-8: this is a strength-hypertrophy hybrid. Stay in 5-8 range.
+  - If reps consistently 8-12: this is a hypertrophy scheme. Stay in 8-12 range.
+  - If reps consistently 12-20: this is a metabolic/endurance scheme. Stay in 12-20 range.
+  - If history is mixed or absent, default to the athlete profile's stated goal, then to 6-10 as a middle ground.
  
-Return a recommendedWeight (number), targetRepRangeLow and targetRepRangeHigh (integers), and a one-sentence reason.`;
+Step 2 — Respect the user's programming. Do NOT change rep scheme unless:
+  (a) the lift is STALLED in context (no e1RM progress in 3+ sessions), AND
+  (b) the stall has lasted long enough that load progression alone won't fix it.
+In that case, you may suggest a deload (drop weight 10-15 percent, same reps) OR a temporary rep range shift, and explain why in the reason.
+ 
+Step 3 — Apply load progression within the inferred scheme:
+  - If recent top-set RPE is 8 or below and they hit the top of their scheme's range, suggest a small weight increase (2.5-5 percent for upper body, 5-10 lbs for lower).
+  - If recent top-set RPE is 9.5+, suggest the SAME weight. Do not push.
+  - If RPE is between 8 and 9.5, suggest the same weight and aim for one more rep.
+ 
+Step 4 — For barbell compound lifts (squat, bench, deadlift, OHP, barbell row, incline barbell bench), bias TOWARD lower-rep schemes unless the user's history clearly shows hypertrophy reps on that specific lift. For isolation lifts (curls, lateral raises, extensions, cable work, flyes), bias toward higher-rep schemes.
+ 
+Use specific numbers from the focus exercise context. Reference the user's actual recent sets in the reason. Do not generalize.
+ 
+Return recommendedWeight (number), targetRepRangeLow and targetRepRangeHigh (integers, reflecting the INFERRED scheme not a default), and a one-sentence reason that names the inferred scheme.`;
  
       callGeminiJSON(prompt, _coachExId, schema).then(data => {
           const reason = stripMarkdown(data.reason || 'Weights suggested.');
