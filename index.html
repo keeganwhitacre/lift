@@ -996,8 +996,26 @@
     <button id="routineAddExBtn" style="background:none; border:none; color:var(--accent); font-weight:600; cursor:pointer; font-family:inherit;">+ Add</button>
   </div>
   <div id="routineExList" style="flex:1; overflow-y:auto; min-height:80px;"></div>
+  <button class="sheet-btn secondary" id="analyzeRoutineBtn" style="flex-shrink:0; display:none;">
+    <svg viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:8px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Analyze with Coach
+  </button>
   <button class="sheet-btn primary" id="saveRoutineBtn" style="flex-shrink:0;">Save Routine</button>
   <button class="sheet-btn danger" id="deleteRoutineBtn" style="flex-shrink:0; display:none;">Delete Routine</button>
+</div>
+
+<!-- ROUTINE ANALYSIS -->
+<div class="sheet tall" id="sheetRoutineAnalysis">
+  <div class="handle"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;">Routine Analysis</div>
+    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div id="routineAnalysisLoading" style="display:none; padding:32px; text-align:center;">
+    <div class="ai-loading" style="justify-content:center;"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+    <div style="font-size:13px; color:var(--text-3); margin-top:12px;">Analyzing routine against your history...</div>
+  </div>
+  <div id="routineAnalysisContent" style="flex:1; overflow-y:auto;"></div>
 </div>
 
    
@@ -1906,12 +1924,18 @@ function openRoutineEditor(routineId) {
     document.getElementById('deleteRoutineBtn').style.display = 'none';
   }
   renderRoutineExList();
+  // Show analyze button only once the editor has at least one exercise.
+  document.getElementById('analyzeRoutineBtn').style.display =
+    _editingRoutineExercises.length ? 'flex' : 'none';
   openSheet('sheetRoutineEditor');
 }
 
 function renderRoutineExList() {
   const list = document.getElementById('routineExList');
   list.innerHTML = '';
+  // Keep analyze button in sync with exercise count
+  const analyzeBtn = document.getElementById('analyzeRoutineBtn');
+  if (analyzeBtn) analyzeBtn.style.display = _editingRoutineExercises.length ? 'flex' : 'none';
   if (!_editingRoutineExercises.length) {
     list.innerHTML = `<div style="padding:16px 0; color:var(--text-4); font-size:14px;">No exercises added yet.</div>`;
     return;
@@ -2008,6 +2032,80 @@ document.getElementById('deleteRoutineBtn').addEventListener('click', async () =
   if (db) await idbDelete('routines', _editingRoutineId);
   ROUTINES = ROUTINES.filter(r => r.id !== _editingRoutineId);
   closeSheets(); renderRoutines(); showToast('Routine deleted');
+});
+
+document.getElementById('analyzeRoutineBtn').addEventListener('click', async () => {
+  if (!_editingRoutineExercises.length) return;
+ 
+  const routineName = document.getElementById('routineNameInput').value.trim() || 'Untitled Routine';
+  const exList = _editingRoutineExercises.map(e => `${getExName(e.exId)} (${e.sets} sets)`).join('; ');
+ 
+  const schema = {
+    type: "OBJECT",
+    properties: {
+      verdict: { type: "STRING" },
+      strengths: { type: "ARRAY", items: { type: "STRING" } },
+      gaps: { type: "ARRAY", items: { type: "STRING" } },
+      redundancies: { type: "ARRAY", items: { type: "STRING" } },
+      suggestedAdditions: { type: "ARRAY", items: { type: "STRING" } },
+      estimatedTimeMin: { type: "INTEGER" },
+      estimatedVolume: { type: "INTEGER" }
+    },
+    required: ["verdict", "strengths", "gaps", "redundancies", "suggestedAdditions", "estimatedTimeMin"]
+  };
+ 
+  const prompt = `Analyze this routine the user is building: "${routineName}".
+Exercises in order: ${exList}.
+ 
+Evaluate against the user's training history. Identify:
+- One sentence verdict on overall quality and fit.
+- Strengths: what this routine does well (max 3 items, short phrases).
+- Gaps: movement patterns, muscle groups, or stimulus types missing or underdosed (max 3 items, short phrases).
+- Redundancies: exercises that overlap too much in stimulus (max 3 items, short phrases). Empty array if none.
+- Suggested additions: specific exercises to add and why (max 3 items, "Exercise name - one-sentence reason" format).
+- Estimated session time in minutes assuming standard rest.
+- Estimated total volume (in ${CFG.unit}) based on the user's recent typical weights for these exercises. Omit if unknown.
+ 
+Be specific. Reference the user's actual numbers from context where relevant. No markdown.`;
+ 
+  const contentEl = document.getElementById('routineAnalysisContent');
+  const loadingEl = document.getElementById('routineAnalysisLoading');
+  contentEl.innerHTML = '';
+  loadingEl.style.display = 'block';
+  openSheet('sheetRoutineAnalysis');
+ 
+  try {
+    const data = await callGeminiJSON(prompt, null, schema);
+    loadingEl.style.display = 'none';
+ 
+    const section = (title, items, color) => {
+      if (!items || !items.length) return '';
+      const lis = items.map(i => `<li style="margin-bottom:6px; line-height:1.5;">${stripMarkdown(i)}</li>`).join('');
+      return `
+        <div style="margin-bottom:20px;">
+          <div style="font-size:12px; font-weight:700; color:${color}; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">${title}</div>
+          <ul style="padding-left:18px; font-size:14px; color:var(--text-1);">${lis}</ul>
+        </div>`;
+    };
+ 
+    contentEl.innerHTML = `
+      <div style="background:var(--bg-canvas); border-radius:12px; padding:16px; margin-bottom:20px; border:0.5px solid var(--border);">
+        <div style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Verdict</div>
+        <div style="font-size:15px; color:var(--text-1); line-height:1.5;">${stripMarkdown(data.verdict || '')}</div>
+        <div style="display:flex; gap:16px; margin-top:12px; padding-top:12px; border-top:0.5px solid var(--border); font-size:13px; color:var(--text-2);">
+          <div><strong>~${data.estimatedTimeMin || '?'} min</strong></div>
+          ${data.estimatedVolume ? `<div><strong>~${data.estimatedVolume.toLocaleString()} ${CFG.unit}</strong> est. volume</div>` : ''}
+        </div>
+      </div>
+      ${section('Strengths', data.strengths, 'var(--success)')}
+      ${section('Gaps', data.gaps, 'var(--warning)')}
+      ${section('Redundancies', data.redundancies, 'var(--danger)')}
+      ${section('Suggested Additions', data.suggestedAdditions, 'var(--accent)')}
+    `;
+  } catch(e) {
+    loadingEl.style.display = 'none';
+    contentEl.innerHTML = `<div style="padding:20px; color:var(--danger); font-size:14px;">Analysis failed: ${e.message}</div>`;
+  }
 });
 
 /* ══════════════════════════════════════════════════════════════════
@@ -2700,22 +2798,20 @@ document.getElementById('confirmFinishYesBtn').addEventListener('click', async (
 document.getElementById('wsAnalyzeBtn').addEventListener('click', () => {
   if (!_summaryData) return;
   document.getElementById('wsAnalyzeBtn').style.display = 'none';
-  
+ 
   let exLog = _summaryData.exs.map(ex => {
     const name = getExName(ex.exId);
-    const sets = ex.sets.map(s => `${s.kg}x${s.reps}`).join(', ');
-    return `- ${name}: ${sets}`;
-  }).join('\n');
-  
-  const prompt = `Analyze this exact workout I just completed. 
-Name: ${_summaryData.name}
-Time: ${_summaryData.mins} mins
-Total Volume: ${_summaryData.vol} ${CFG.unit}
-Exercises:
-${exLog}
-
-Provide a clinical, brief assessment. Highlight any obvious muscular imbalances or praise good working volume. 100 words max. No intro/outro fluff.`;
-
+    const sets = ex.sets.map(s => `${s.kg}x${s.reps}${s.rpe?'@'+s.rpe:''}`).join(', ');
+    return `${name}: ${sets}`;
+  }).join('; ');
+ 
+  const prompt = `Analyze the workout the user just completed against their training history.
+ 
+Just-completed session: ${_summaryData.name}, ${_summaryData.mins} min, ${_summaryData.vol} ${CFG.unit} total volume.
+Exercises: ${exLog}
+ 
+Compare against the trajectory data in the training context. Did any lift PR? Did anything regress? Was effort distributed well? Call out one specific thing to address next session. 100 words max.`;
+ 
   callGemini(prompt, document.getElementById('wsAnalyzeOut'));
 });
 
@@ -2876,8 +2972,32 @@ const COACH_SYS = `You are an embedded strength coach. Rules:
 - Lead with the most actionable insight.
 - Use specific numbers, not vague qualifiers.
 - Flag weak points and imbalances directly.
-- 150 words max unless generating a full program.`;
+- 150 words max unless generating a full program.
+ 
+OUTPUT FORMAT — STRICT:
+- Plain text only. No markdown.
+- No asterisks for bold or italics. No underscores for emphasis.
+- No pound signs for headers. No hash marks anywhere.
+- No bullet points with dashes, asterisks, or numbers.
+- Write in prose paragraphs. Use line breaks for separation.
+- If you need to list items, do it inline with commas or semicolons.`;
+ 
+function stripMarkdown(s) {
+  if (!s) return s;
+  return s
+    .replace(/\*\*(.+?)\*\*/g, '$1')   // **bold**
+    .replace(/\*(.+?)\*/g, '$1')       // *italic*
+    .replace(/__(.+?)__/g, '$1')       // __bold__
+    .replace(/_(.+?)_/g, '$1')         // _italic_
+    .replace(/^#{1,6}\s+/gm, '')       // # headers
+    .replace(/^\s*[-*+]\s+/gm, '')     // - bullet points
+    .replace(/^\s*\d+\.\s+/gm, '')     // 1. numbered lists
+    .replace(/`([^`]+)`/g, '$1')       // `code`
+    .trim();
+}
 
+// Keep the old function as a fallback. The new buildCoachContext()
+// is used everywhere; old function is only kept for backward compat.
 function buildMinifiedHistory() {
   const recent = [...WORKOUTS].sort((a,b) => b.endTime - a.endTime).slice(0,10);
   if (!recent.length) return '(no history)';
@@ -2891,15 +3011,150 @@ function buildMinifiedHistory() {
     return `[${date} ${w.name}]\n${exLines}`;
   }).join('\n');
 }
+ 
+/**
+ * Build precomputed analytics for the coach.
+ * @param {string|null} focusExId - If provided, include deep analytics for this exercise only.
+ *                                  If null, include summaries for all exercises.
+ * @returns {string} Formatted context block for the AI prompt.
+ */
+function buildCoachContext(focusExId = null) {
+  if (!WORKOUTS.length) return 'No training history yet.';
+ 
+  const now = Date.now();
+  const DAY = 86400000;
+ 
+  // Group sets by exercise across all workouts
+  const exData = {};  // exId -> [{ts, sets: [{kg, reps, rpe}]}, ...]
+  WORKOUTS.forEach(w => {
+    w.exercises.forEach(ex => {
+      const doneSets = ex.sets.filter(s => s.done && s.kg > 0 && s.reps > 0);
+      if (!doneSets.length) return;
+      if (!exData[ex.exId]) exData[ex.exId] = [];
+      exData[ex.exId].push({
+        ts: w.endTime,
+        sets: doneSets.map(s => ({ kg: s.kg, reps: s.reps, rpe: s.rpe || null }))
+      });
+    });
+  });
+ 
+  // Sort each exercise's sessions chronologically
+  Object.values(exData).forEach(arr => arr.sort((a, b) => a.ts - b.ts));
+ 
+  // Per-exercise analytics
+  function analyzeExercise(exId) {
+    const sessions = exData[exId];
+    if (!sessions || !sessions.length) return null;
+ 
+    // e1RM trajectory (last 6 sessions): max Epley per session
+    const last6 = sessions.slice(-6);
+    const trajectory = last6.map(s => ({
+      date: new Date(s.ts).toISOString().split('T')[0],
+      e1rm: Math.max(...s.sets.map(x => epley(x.kg, x.reps)))
+    }));
+ 
+    // Slope: simple first-to-last delta over count
+    let slope = null;
+    if (trajectory.length >= 2) {
+      const first = trajectory[0].e1rm;
+      const last = trajectory[trajectory.length - 1].e1rm;
+      slope = +((last - first) / (trajectory.length - 1)).toFixed(2);
+    }
+ 
+    // Stalled: no e1RM gain in last 3 sessions
+    let stalled = false;
+    if (trajectory.length >= 3) {
+      const recent3 = trajectory.slice(-3).map(t => t.e1rm);
+      stalled = recent3[2] <= Math.max(recent3[0], recent3[1]);
+    }
+ 
+    // Last session top set
+    const lastSess = sessions[sessions.length - 1];
+    const topSet = lastSess.sets.reduce((best, s) =>
+      epley(s.kg, s.reps) > epley(best.kg, best.reps) ? s : best
+    );
+    const lastVolume = lastSess.sets.reduce((sum, s) => sum + s.kg * s.reps, 0);
+ 
+    // Days since last trained
+    const daysSince = Math.floor((now - lastSess.ts) / DAY);
+ 
+    // Typical rep range across last 3 sessions
+    const recentReps = sessions.slice(-3).flatMap(s => s.sets.map(x => x.reps));
+    const repRange = recentReps.length
+      ? [Math.min(...recentReps), Math.max(...recentReps)]
+      : null;
+ 
+    // RPE pattern on top sets, last 3 sessions
+    const recentTopRPEs = sessions.slice(-3).map(s => {
+      const top = s.sets.reduce((b, x) => epley(x.kg, x.reps) > epley(b.kg, b.reps) ? x : b);
+      return top.rpe;
+    }).filter(r => r !== null);
+ 
+    return {
+      name: getExName(exId),
+      sessionCount: sessions.length,
+      lastSession: {
+        date: new Date(lastSess.ts).toISOString().split('T')[0],
+        topSet: { kg: topSet.kg, reps: topSet.reps, rpe: topSet.rpe },
+        volume: lastVolume,
+        setCount: lastSess.sets.length
+      },
+      e1rmTrajectory: trajectory.map(t => t.e1rm),
+      e1rmSlope: slope,
+      stalled,
+      daysSinceTrained: daysSince,
+      typicalRepRange: repRange,
+      recentTopRPEs
+    };
+  }
+ 
+  // Format for prompt
+  const lines = [];
+  lines.push(`Unit: ${CFG.unit}`);
+  lines.push(`Total workouts logged: ${WORKOUTS.length}`);
+  lines.push(`Last workout: ${new Date(WORKOUTS.sort((a,b)=>b.endTime-a.endTime)[0].endTime).toISOString().split('T')[0]}`);
+  lines.push('');
+ 
+  if (focusExId) {
+    const a = analyzeExercise(focusExId);
+    if (a) {
+      lines.push(`FOCUS EXERCISE: ${a.name}`);
+      lines.push(`  Sessions logged: ${a.sessionCount}`);
+      lines.push(`  Last session (${a.lastSession.date}): top set ${a.lastSession.topSet.kg}×${a.lastSession.topSet.reps}${a.lastSession.topSet.rpe ? ' @RPE'+a.lastSession.topSet.rpe : ''}, volume ${a.lastSession.volume}, ${a.lastSession.setCount} sets`);
+      lines.push(`  e1RM trajectory (last ${a.e1rmTrajectory.length}): ${a.e1rmTrajectory.join(' → ')}`);
+      lines.push(`  Slope per session: ${a.e1rmSlope}`);
+      lines.push(`  Stalled: ${a.stalled ? 'YES (no e1RM gain in 3 sessions)' : 'no'}`);
+      lines.push(`  Days since trained: ${a.daysSinceTrained}`);
+      if (a.typicalRepRange) lines.push(`  Recent rep range: ${a.typicalRepRange[0]}-${a.typicalRepRange[1]}`);
+      if (a.recentTopRPEs.length) lines.push(`  Recent top-set RPEs: ${a.recentTopRPEs.join(', ')}`);
+      lines.push('');
+    }
+  }
+ 
+  // All exercises summary (compact)
+  lines.push('ALL TRACKED EXERCISES (compact):');
+  const allEx = Object.keys(exData)
+    .map(id => analyzeExercise(id))
+    .filter(a => a)
+    .sort((a, b) => b.sessionCount - a.sessionCount);
+ 
+  allEx.forEach(a => {
+    const stallTag = a.stalled ? ' [STALLED]' : '';
+    const last = a.lastSession;
+    lines.push(`  ${a.name}: ${a.sessionCount}x, last ${last.topSet.kg}×${last.topSet.reps}${last.topSet.rpe?'@'+last.topSet.rpe:''} (${a.daysSinceTrained}d ago)${stallTag}`);
+  });
+ 
+  return lines.join('\n');
+}
 
-async function callGemini(prompt, outputEl) {
+async function callGemini(prompt, outputEl, focusExId = null) {
   const key = CFG.geminiKey;
   if (!key) { outputEl.style.display='block'; outputEl.textContent = 'Add a Gemini API key in Settings to use AI features.'; return; }
   outputEl.style.display = 'block';
   outputEl.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>';
-  const history = buildMinifiedHistory();
-  const profile = CFG.athleteProfile ? `\n\n## Athlete Profile\n${CFG.athleteProfile}` : '';
-  const full = `${COACH_SYS}${profile}\n\n## Training History\n${history}\n\nUnit: ${CFG.unit}\n\n## Request\n${prompt}`;
+  const context = buildCoachContext(focusExId);
+  const profile = CFG.athleteProfile ? `\n\nATHLETE PROFILE:\n${CFG.athleteProfile}` : '';
+  const full = `${COACH_SYS}${profile}\n\nTRAINING CONTEXT:\n${context}\n\nREQUEST:\n${prompt}`;
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${key}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -2907,22 +3162,26 @@ async function callGemini(prompt, outputEl) {
     });
     if (!res.ok) throw new Error(`API ${res.status}`);
     const data = await res.json();
-    outputEl.textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+    outputEl.textContent = stripMarkdown(raw);
   } catch(e) { outputEl.textContent = 'Error: ' + e.message; }
 }
 
-async function callGeminiJSON(prompt) {
+async function callGeminiJSON(prompt, focusExId = null, schema = null) {
   const key = CFG.geminiKey;
   if (!key) throw new Error('No API key in Settings');
-  const history = buildMinifiedHistory();
-  const profile = CFG.athleteProfile ? `\n\n## Athlete Profile\n${CFG.athleteProfile}` : '';
-  const full = `${COACH_SYS}${profile}\n\n## Training History\n${history}\n\nUnit: ${CFG.unit}\n\n## Request\n${prompt}`;
-  
+  const context = buildCoachContext(focusExId);
+  const profile = CFG.athleteProfile ? `\n\nATHLETE PROFILE:\n${CFG.athleteProfile}` : '';
+  const full = `${COACH_SYS}${profile}\n\nTRAINING CONTEXT:\n${context}\n\nREQUEST:\n${prompt}`;
+ 
+  const genConfig = { responseMimeType: "application/json" };
+  if (schema) genConfig.responseSchema = schema;
+ 
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${key}`, {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
        contents:[{ parts:[{text:full}] }],
-       generationConfig: { responseMimeType: "application/json" }
+       generationConfig: genConfig
     })
   });
   if (!res.ok) throw new Error(`API ${res.status}`);
@@ -2936,7 +3195,7 @@ async function generateRoutineAI(req) {
   const out = document.getElementById('routineOutput');
   out.style.display = 'block';
   out.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>';
-  
+ 
   const schema = {
     type: "OBJECT",
     properties: {
@@ -2946,9 +3205,9 @@ async function generateRoutineAI(req) {
     }
   };
   const prompt = `Generate a workout routine perfectly tailored to these constraints: ${req}. Keep it completely focused on what matters. Use standard exercise names.`;
-  const history = buildMinifiedHistory();
-  const profile = CFG.athleteProfile ? `\n\n## Athlete Profile\n${CFG.athleteProfile}` : '';
-  const fullContext = `${profile}\n\n## Training History\n${history}\n\nUnit: ${CFG.unit}\n\n## Request\n${prompt}`;
+  const context = buildCoachContext(null);
+  const profile = CFG.athleteProfile ? `\n\nATHLETE PROFILE:\n${CFG.athleteProfile}` : '';
+  const fullContext = `${profile}\n\nTRAINING CONTEXT:\n${context}\n\nREQUEST:\n${prompt}`;
   
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${key}`, {
@@ -2973,7 +3232,7 @@ async function generateRoutineAI(req) {
         return { exId: ex.id, sets: e.sets || 3 };
     });
     
-    out.innerHTML = `<div style="margin-bottom:12px; font-size:14px;"><strong>Coach Note:</strong> ${parsed.coachNotes}</div>`;
+   out.innerHTML = `<div style="margin-bottom:12px; font-size:14px;"><strong>Coach Note:</strong> ${stripMarkdown(parsed.coachNotes || '')}</div>`;
     
     // Start workout immediately
     startWorkout({ name: parsed.routineName || 'AI Generated Workout', exercises });
@@ -3016,13 +3275,37 @@ document.getElementById('coachActionChips').addEventListener('click', e => {
       document.getElementById('coachAdviceWrap').style.display = 'none';
       document.getElementById('coachOutput').style.display = 'block';
       document.getElementById('coachOutput').innerHTML = '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>';
-      
-      const prompt = `Based on my history, recommend a working weight and reps for ${exName}. Return ONLY valid JSON: {"recommendedWeight": 100, "recommendedReps": 10, "reason": "brief explanation"}. No markdown.`;
-      callGeminiJSON(prompt).then(data => {
-          document.getElementById('coachOutput').textContent = data.reason || 'Weights suggested.';
-          if (AW && (data.recommendedWeight || data.recommendedReps)) {
+ 
+      const schema = {
+        type: "OBJECT",
+        properties: {
+          recommendedWeight: { type: "NUMBER" },
+          targetRepRangeLow: { type: "INTEGER" },
+          targetRepRangeHigh: { type: "INTEGER" },
+          reason: { type: "STRING" }
+        },
+        required: ["recommendedWeight", "targetRepRangeLow", "targetRepRangeHigh", "reason"]
+      };
+ 
+      const prompt = `Recommend a working weight and target rep range for the user's next set of ${exName}.
+ 
+Apply these rules:
+- Goal is hypertrophy unless the athlete profile says otherwise. Target rep range 8-12 by default.
+- If the exercise is STALLED (see context), drop weight 10-15 percent to hit the upper end of the rep range, OR shift to a higher rep range (12-15). Pick one and explain.
+- If recent top-set RPEs are 8 or below and they hit the top of the rep range, suggest a small weight increase (2.5-5 percent).
+- If recent top-set RPEs are 9.5+ consistently, suggest the same weight, do not push.
+- Use specific numbers from the focus exercise context. Do not generalize.
+ 
+Return a recommendedWeight (number), targetRepRangeLow and targetRepRangeHigh (integers), and a one-sentence reason.`;
+ 
+      callGeminiJSON(prompt, _coachExId, schema).then(data => {
+          const reason = stripMarkdown(data.reason || 'Weights suggested.');
+          const rangeStr = `${data.targetRepRangeLow}-${data.targetRepRangeHigh}`;
+          document.getElementById('coachOutput').textContent =
+            `Suggested: ${data.recommendedWeight} ${CFG.unit} × ${rangeStr} reps. ${reason}`;
+          if (AW && _coachExIdx !== null) {
               AW.exercises[_coachExIdx].suggestedKg = data.recommendedWeight || '';
-              AW.exercises[_coachExIdx].suggestedReps = data.recommendedReps || '';
+              AW.exercises[_coachExIdx].suggestedReps = rangeStr;
               saveAW(); renderAWList();
           }
       }).catch(err => {
