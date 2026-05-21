@@ -689,7 +689,7 @@
   <div class="scroll-container">
     <div class="content-centerer">
       
-      <!-- Streaks Card -->
+     <!-- Streaks Card -->
       <div class="card" style="cursor:default; margin-bottom:12px; display:flex; justify-content:space-around; text-align:center;">
         <div>
           <div class="stat-tile-val" id="stkCurrent" style="font-size:28px;">0</div>
@@ -700,6 +700,11 @@
           <div class="stat-tile-val" id="stkMax" style="font-size:28px;">0</div>
           <div class="stat-tile-label" style="font-size:11px;">All-Time Best (Wks)</div>
         </div>
+      </div>
+ 
+      <!-- Training Plan Card -->
+      <div class="card" style="cursor:default; margin-bottom:12px;" id="planCard">
+        <!-- Filled in by renderPlanCard() -->
       </div>
 
       <div class="stat-grid" id="statGrid" style="grid-template-columns: 1fr 1fr 1fr; gap:8px;"></div>
@@ -844,6 +849,47 @@
   </div>
 </div>
 
+<!-- TRAINING PLAN — GENERATE -->
+<div class="sheet" id="sheetPlanGenerate">
+  <div class="handle"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;">Plan Next Block</div>
+    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <p style="color:var(--text-2); font-size:14px; line-height:1.5; margin-bottom:16px;">Coach drafts a multi-week plan from your history and routines. Specify the goal and constraints. Plan will be inactive until you review and activate it.</p>
+ 
+  <div class="sheet-label">Block Length</div>
+  <div class="chip-row" id="planLengthChips">
+    <div class="s-chip" data-weeks="4">4 weeks</div>
+    <div class="s-chip active" data-weeks="6">6 weeks</div>
+    <div class="s-chip" data-weeks="8">8 weeks</div>
+  </div>
+ 
+  <div class="sheet-label">Primary Focus</div>
+  <textarea class="input" id="planGoalInput" rows="3" placeholder="e.g. Push incline bench to 185×4. Maintain squat. Bring up lagging rear delts."></textarea>
+ 
+  <div class="sheet-label">Constraints (optional)</div>
+  <textarea class="input" id="planConstraintsInput" rows="2" placeholder="Knee tweak, lifting 4x/week, no deadlifts this block."></textarea>
+ 
+  <button class="sheet-btn primary" id="btnGeneratePlan">Generate Plan</button>
+  <div class="ai-output" id="planGenerateOutput" style="display:none; margin-top:12px;"></div>
+</div>
+ 
+<!-- TRAINING PLAN — VIEW -->
+<div class="sheet tall" id="sheetPlanView">
+  <div class="handle"></div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="sheet-title" style="margin:0;" id="planViewTitle">Training Plan</div>
+    <div class="icon-btn close-sheet-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div id="planViewContent" style="flex:1; overflow-y:auto;"></div>
+  <div style="display:flex; gap:8px; margin-top:12px; flex-shrink:0;">
+    <button class="sheet-btn secondary" id="btnPlanToggleActive" style="flex:1; margin-top:0; font-size:14px;">Activate</button>
+    <button class="sheet-btn secondary" id="btnPlanRegen" style="flex:1; margin-top:0; font-size:14px;">Regenerate</button>
+  </div>
+  <button class="sheet-btn danger" id="btnPlanClear" style="flex-shrink:0;">Clear Plan</button>
+</div>
+
 <!-- HISTORY DETAIL (View/Delete Past Workout) -->
 <div class="sheet tall" id="sheetHistoryDetail">
   <div class="handle"></div>
@@ -954,13 +1000,15 @@
 <!-- SET TAG PICKER -->
 <div class="sheet" id="sheetSetTag">
   <div class="handle"></div>
-  <div class="sheet-title">Set Tag</div>
+  <div class="sheet-title">Set Options</div>
+  <div class="sheet-label" style="margin-top:0;">Tag</div>
   <div class="chip-row">
     <div class="s-chip" id="tagNoneBtn">Normal</div>
     <div class="s-chip" id="tagWarmupBtn" style="color:#5ac8fa;">Warm-up</div>
     <div class="s-chip" id="tagFailureBtn" style="color:var(--danger);">Failure</div>
     <div class="s-chip" id="tagDropBtn" style="color:#af52de;">Drop Set</div>
   </div>
+  <button class="sheet-btn danger" id="deleteSetBtn" style="margin-top:20px;">Delete Set</button>
 </div>
 
 <!-- PLATE CALCULATOR -->
@@ -1297,13 +1345,35 @@ function saveCFG() { localStorage.setItem(CFG_KEY, JSON.stringify(CFG)); }
 
 const AW_KEY = 'kw_lift_aw';
 let AW = null;
-
+ 
 function saveAW() {
   if (AW) localStorage.setItem(AW_KEY, JSON.stringify(AW));
   else    localStorage.removeItem(AW_KEY);
 }
 function loadAW() {
   try { return JSON.parse(localStorage.getItem(AW_KEY) || 'null'); } catch(e) { return null; }
+}
+ 
+const PLAN_KEY = 'kw_lift_plan';
+let PLAN = null;
+ 
+function savePLAN() {
+  if (PLAN) localStorage.setItem(PLAN_KEY, JSON.stringify(PLAN));
+  else      localStorage.removeItem(PLAN_KEY);
+}
+function loadPLAN() {
+  try { return JSON.parse(localStorage.getItem(PLAN_KEY) || 'null'); } catch(e) { return null; }
+}
+ 
+// Compute plan age in days, and whether it has expired
+function planAgeDays() {
+  if (!PLAN || !PLAN.startDate) return null;
+  return Math.floor((Date.now() - new Date(PLAN.startDate).getTime()) / 86400000);
+}
+function planIsExpired() {
+  if (!PLAN || !PLAN.durationWeeks) return false;
+  const age = planAgeDays();
+  return age !== null && age > PLAN.durationWeeks * 7;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -1335,6 +1405,118 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.style.opacity = 1;
   setTimeout(() => t.style.opacity = 0, 2500);
+}
+
+function renderPlanCard() {
+  const card = document.getElementById('planCard');
+  if (!card) return;
+ 
+  if (!PLAN) {
+    card.innerHTML = `
+      <div class="card-label">Training Plan</div>
+      <div style="font-size:14px; color:var(--text-3); margin-bottom:12px; line-height:1.5;">
+        No active plan. Let the coach draft a multi-week block so every session, routine, and weight recommendation pulls in the same direction.
+      </div>
+      <button class="sheet-btn primary" id="btnOpenPlanGen" style="margin-top:0; border-radius:100px;">Plan Next Block</button>
+    `;
+    document.getElementById('btnOpenPlanGen').addEventListener('click', () => {
+      openSheet('sheetPlanGenerate');
+    });
+    return;
+  }
+ 
+  const age = planAgeDays();
+  const week = Math.floor(age / 7) + 1;
+  const expired = planIsExpired();
+  const statusColor = !PLAN.active ? 'var(--text-3)' : expired ? 'var(--danger)' : 'var(--success)';
+  const statusText = !PLAN.active ? 'Draft' : expired ? `Expired (week ${week} of ${PLAN.durationWeeks})` : `Active — week ${week} of ${PLAN.durationWeeks}`;
+ 
+  card.innerHTML = `
+    <div class="card-label">
+      Training Plan
+      <span style="color:${statusColor}; font-size:11px;">● ${statusText}</span>
+    </div>
+    <div style="font-size:15px; font-weight:600; color:var(--text-1); margin-bottom:4px; line-height:1.4;">${PLAN.goal || 'Untitled block'}</div>
+    <div style="font-size:13px; color:var(--text-3); margin-bottom:12px;">
+      ${(PLAN.priorityLifts || []).length} priority lift${(PLAN.priorityLifts || []).length !== 1 ? 's' : ''} ·
+      ${(PLAN.maintenanceLifts || []).length} maintenance ·
+      ${(PLAN.dropOrReplace || []).length} drop/replace
+    </div>
+    <button class="sheet-btn secondary" id="btnOpenPlanView" style="margin-top:0; border-radius:100px;">View Plan</button>
+  `;
+  document.getElementById('btnOpenPlanView').addEventListener('click', () => {
+    renderPlanView();
+    openSheet('sheetPlanView');
+  });
+}
+
+function renderPlanView() {
+  if (!PLAN) return;
+ 
+  const age = planAgeDays();
+  const week = Math.floor(age / 7) + 1;
+  const expired = planIsExpired();
+ 
+  document.getElementById('planViewTitle').textContent = PLAN.active ? 'Active Plan' : 'Draft Plan';
+  document.getElementById('btnPlanToggleActive').textContent = PLAN.active ? 'Deactivate' : 'Activate';
+ 
+  const content = document.getElementById('planViewContent');
+ 
+  const section = (title, items, renderItem, color) => {
+    if (!items || !items.length) return '';
+    const rendered = items.map(renderItem).join('');
+    return `
+      <div style="margin-bottom:20px;">
+        <div style="font-size:12px; font-weight:700; color:${color}; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">${title}</div>
+        ${rendered}
+      </div>`;
+  };
+ 
+  const liftRow = (label, sub) => `
+    <div style="padding:10px 0; border-bottom:0.5px solid var(--border);">
+      <div style="font-size:14px; font-weight:600; color:var(--text-1);">${stripMarkdown(label)}</div>
+      ${sub ? `<div style="font-size:12px; color:var(--text-3); margin-top:4px; line-height:1.5;">${stripMarkdown(sub)}</div>` : ''}
+    </div>`;
+ 
+  content.innerHTML = `
+    <div style="background:var(--bg-canvas); border-radius:12px; padding:16px; margin-bottom:20px; border:0.5px solid var(--border);">
+      <div style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Goal · ${PLAN.durationWeeks}-week block</div>
+      <div style="font-size:15px; color:var(--text-1); line-height:1.5; margin-bottom:12px;">${stripMarkdown(PLAN.goal || '')}</div>
+      <div style="display:flex; gap:12px; padding-top:12px; border-top:0.5px solid var(--border); font-size:13px; color:var(--text-2);">
+        <div>Started: <strong>${new Date(PLAN.startDate).toLocaleDateString()}</strong></div>
+        <div>${PLAN.active ? (expired ? `<strong style="color:var(--danger);">Expired</strong>` : `Week <strong>${week}</strong> of ${PLAN.durationWeeks}`) : `<strong>Draft (not active)</strong>`}</div>
+      </div>
+    </div>
+ 
+    ${section('Priority Lifts', PLAN.priorityLifts, p =>
+      liftRow(p.exName, `${p.currentTarget} → ${p.blockTarget}. ${p.progressionRule}`),
+      'var(--accent)'
+    )}
+ 
+    ${section('Maintenance', PLAN.maintenanceLifts, m =>
+      liftRow(m.exName, m.note),
+      'var(--success)'
+    )}
+ 
+    ${section('Drop or Replace', PLAN.dropOrReplace, d =>
+      liftRow(d.exName, `${d.reason}${d.replacement ? ' Replace with: ' + d.replacement : ''}`),
+      'var(--danger)'
+    )}
+ 
+    ${PLAN.structuralChanges && PLAN.structuralChanges.length ? `
+      <div style="margin-bottom:20px;">
+        <div style="font-size:12px; font-weight:700; color:var(--warning); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">Split Changes</div>
+        <ul style="padding-left:18px; font-size:14px; color:var(--text-1); line-height:1.6;">
+          ${PLAN.structuralChanges.map(s => `<li style="margin-bottom:4px;">${stripMarkdown(s)}</li>`).join('')}
+        </ul>
+      </div>` : ''}
+ 
+    ${PLAN.coachNotes ? `
+      <div style="background:var(--bg-canvas); border-radius:12px; padding:14px 16px; margin-bottom:20px; border:0.5px solid var(--border);">
+        <div style="font-size:12px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px;">Coach Notes</div>
+        <div style="font-size:14px; color:var(--text-2); line-height:1.5;">${stripMarkdown(PLAN.coachNotes)}</div>
+      </div>` : ''}
+  `;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -2032,6 +2214,207 @@ document.getElementById('deleteRoutineBtn').addEventListener('click', async () =
   if (db) await idbDelete('routines', _editingRoutineId);
   ROUTINES = ROUTINES.filter(r => r.id !== _editingRoutineId);
   closeSheets(); renderRoutines(); showToast('Routine deleted');
+});
+
+document.getElementById('planLengthChips').addEventListener('click', e => {
+  const chip = e.target.closest('.s-chip');
+  if (!chip) return;
+  document.querySelectorAll('#planLengthChips .s-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+});
+ 
+// Generate Plan handler
+document.getElementById('btnGeneratePlan').addEventListener('click', async () => {
+  const key = CFG.geminiKey;
+  if (!key) { showToast('Add Gemini API key in settings'); return; }
+ 
+  const goal = document.getElementById('planGoalInput').value.trim();
+  if (!goal) { showToast('Describe what you want this block to accomplish'); return; }
+ 
+  const constraints = document.getElementById('planConstraintsInput').value.trim();
+  const weeks = parseInt(document.querySelector('#planLengthChips .s-chip.active').dataset.weeks) || 6;
+ 
+  const out = document.getElementById('planGenerateOutput');
+  out.style.display = 'block';
+  out.innerHTML = '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>';
+ 
+  // Summary of current routines for split awareness
+  const routinesContext = ROUTINES.length
+    ? ROUTINES.map(r => {
+        const exs = (r.exercises || []).map(e => `${getExName(e.exId)} (${e.sets || 3}s)`).join(', ');
+        return `  ${r.name}: ${exs}`;
+      }).join('\n')
+    : '  (no routines defined)';
+ 
+  const schema = {
+    type: "OBJECT",
+    properties: {
+      goal: { type: "STRING" },
+      durationWeeks: { type: "INTEGER" },
+      priorityLifts: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            exName: { type: "STRING" },
+            currentTarget: { type: "STRING" },
+            blockTarget: { type: "STRING" },
+            progressionRule: { type: "STRING" }
+          },
+          required: ["exName", "currentTarget", "blockTarget", "progressionRule"]
+        }
+      },
+      maintenanceLifts: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            exName: { type: "STRING" },
+            note: { type: "STRING" }
+          },
+          required: ["exName", "note"]
+        }
+      },
+      dropOrReplace: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            exName: { type: "STRING" },
+            reason: { type: "STRING" },
+            replacement: { type: "STRING" }
+          },
+          required: ["exName", "reason"]
+        }
+      },
+      structuralChanges: { type: "ARRAY", items: { type: "STRING" } },
+      coachNotes: { type: "STRING" }
+    },
+    required: ["goal", "durationWeeks", "priorityLifts", "maintenanceLifts", "dropOrReplace", "coachNotes"]
+  };
+ 
+  const prompt = `Draft a ${weeks}-week training block for the user.
+ 
+USER'S STATED GOAL: ${goal}
+${constraints ? 'CONSTRAINTS: ' + constraints : ''}
+ 
+USER'S CURRENT ROUTINES (their actual split):
+${routinesContext}
+ 
+Generate a structured plan. Be specific and reference the user's actual lifts and numbers from the training context.
+ 
+For each section:
+ 
+Priority lifts (2-4 max): The 2-4 lifts to push hardest this block. For each:
+  - currentTarget: their current top-set performance, e.g. "165×4×4 @ RPE 8"
+  - blockTarget: realistic end-of-block target, e.g. "175×4×4 @ RPE 8" — be conservative, this is a ${weeks}-week target
+  - progressionRule: how to get there, e.g. "Add 2.5 lb when all 4 sets clear at RPE ≤ 8 for two consecutive sessions"
+  Respect the inferred rep scheme on each lift from their history. Do NOT change rep ranges unless the lift is stalled.
+ 
+Maintenance lifts (3-6 lifts): Exercises that are working but don't need a push. For each, give a one-sentence note like "Keep at current load, focus on bar speed."
+ 
+Drop or replace (0-3 items): Lifts that are stalled, redundant with priority lifts, or not serving the goal. Each needs a reason and optionally a replacement.
+ 
+Structural changes (0-3 items, optional): Changes to the split itself — e.g. "Consolidate Push A and Push B incline pressing into one lift to allow recovery."
+ 
+Coach notes: 2-3 sentences of overall guidance. Mention deload timing if a ${weeks}-week block warrants it.
+ 
+Hard rules:
+- Never recommend an exercise the user doesn't already do unless explicitly suggesting a replacement.
+- Targets must be realistic for the time frame. A ${weeks}-week block on a hypertrophy lift typically yields 5-10 lb gains, not 30 lb.
+- Reference the user's split structure. If they run a Push A / Push B style split, treat the variants as a single weekly stimulus.
+- No markdown.`;
+ 
+  try {
+    const data = await callGeminiJSON(prompt, null, schema);
+ 
+    // Build the plan object, mark as draft (active=false) until user reviews
+    PLAN = {
+      goal: stripMarkdown(data.goal || goal),
+      durationWeeks: data.durationWeeks || weeks,
+      startDate: new Date().toISOString(),
+      active: false,
+      priorityLifts: (data.priorityLifts || []).map(p => ({
+        exName: stripMarkdown(p.exName),
+        currentTarget: stripMarkdown(p.currentTarget),
+        blockTarget: stripMarkdown(p.blockTarget),
+        progressionRule: stripMarkdown(p.progressionRule)
+      })),
+      maintenanceLifts: (data.maintenanceLifts || []).map(m => ({
+        exName: stripMarkdown(m.exName),
+        note: stripMarkdown(m.note)
+      })),
+      dropOrReplace: (data.dropOrReplace || []).map(d => ({
+        exName: stripMarkdown(d.exName),
+        reason: stripMarkdown(d.reason),
+        replacement: stripMarkdown(d.replacement || '')
+      })),
+      structuralChanges: (data.structuralChanges || []).map(s => stripMarkdown(s)),
+      coachNotes: stripMarkdown(data.coachNotes || '')
+    };
+    savePLAN();
+ 
+    out.style.display = 'none';
+    out.innerHTML = '';
+    closeSheet('sheetPlanGenerate');
+    renderPlanCard();
+    renderPlanView();
+    openSheet('sheetPlanView');
+    showToast('Plan drafted. Review and activate.');
+  } catch(e) {
+    out.textContent = 'Plan generation failed: ' + e.message;
+  }
+});
+ 
+// Toggle plan active/inactive
+document.getElementById('btnPlanToggleActive').addEventListener('click', () => {
+  if (!PLAN) return;
+  PLAN.active = !PLAN.active;
+  if (PLAN.active) {
+    // Reset start date when newly activated so the week counter is accurate
+    PLAN.startDate = new Date().toISOString();
+  }
+  savePLAN();
+  renderPlanCard();
+  renderPlanView();
+  showToast(PLAN.active ? 'Plan activated — guides all coach output' : 'Plan deactivated');
+});
+ 
+// Regenerate plan — reopens the generator with current goal prefilled
+document.getElementById('btnPlanRegen').addEventListener('click', () => {
+  if (!PLAN) return;
+  document.getElementById('planGoalInput').value = PLAN.goal || '';
+  document.getElementById('planConstraintsInput').value = '';
+  // Match the duration chip
+  document.querySelectorAll('#planLengthChips .s-chip').forEach(c => {
+    c.classList.toggle('active', parseInt(c.dataset.weeks) === PLAN.durationWeeks);
+  });
+  closeSheet('sheetPlanView');
+  openSheet('sheetPlanGenerate');
+});
+ 
+// Clear plan entirely
+let _planClearArmed = false;
+let _planClearTimer = null;
+document.getElementById('btnPlanClear').addEventListener('click', () => {
+  const btn = document.getElementById('btnPlanClear');
+  if (!_planClearArmed) {
+    _planClearArmed = true;
+    btn.textContent = 'Tap again to confirm';
+    _planClearTimer = setTimeout(() => {
+      _planClearArmed = false;
+      btn.textContent = 'Clear Plan';
+    }, 3000);
+    return;
+  }
+  clearTimeout(_planClearTimer);
+  _planClearArmed = false;
+  btn.textContent = 'Clear Plan';
+  PLAN = null;
+  savePLAN();
+  closeSheet('sheetPlanView');
+  renderPlanCard();
+  showToast('Plan cleared');
 });
 
 document.getElementById('analyzeRoutineBtn').addEventListener('click', async () => {
@@ -2906,6 +3289,22 @@ document.getElementById('tagNoneBtn').addEventListener('click', () => applyTag(n
 document.getElementById('tagWarmupBtn').addEventListener('click', () => applyTag('warmup'));
 document.getElementById('tagFailureBtn').addEventListener('click', () => applyTag('failure'));
 document.getElementById('tagDropBtn').addEventListener('click', () => applyTag('drop'));
+ 
+document.getElementById('deleteSetBtn').addEventListener('click', () => {
+  if (!_tagSet || !AW) { closeSheets(); return; }
+  const ex = AW.exercises[_tagSet.exIdx];
+  if (!ex) { closeSheets(); return; }
+  if (ex.sets.length <= 1) {
+    showToast('Use the exercise menu to remove the whole exercise');
+    closeSheets();
+    return;
+  }
+  ex.sets.splice(_tagSet.setIdx, 1);
+  saveAW();
+  renderAWList();
+  closeSheets();
+  showToast('Set deleted');
+});
 
 /* ══════════════════════════════════════════════════════════════════
    PLATE CALCULATOR
@@ -3130,12 +3529,78 @@ function buildCoachContext(focusExId = null) {
     };
   }
  
-  // Format for prompt
+ // Format for prompt
   const lines = [];
   lines.push(`Unit: ${CFG.unit}`);
   lines.push(`Total workouts logged: ${WORKOUTS.length}`);
   lines.push(`Last workout: ${new Date(WORKOUTS.sort((a,b)=>b.endTime-a.endTime)[0].endTime).toISOString().split('T')[0]}`);
   lines.push('');
+ 
+  // Current session context — what the user has already completed
+  // in the in-progress workout. Excludes the focus exercise so its
+  // own sets aren't double-counted alongside the focus exercise summary.
+  if (AW && AW.exercises && AW.exercises.length) {
+    const minsIn = Math.floor((Date.now() - AW.startTime) / 60000);
+    const completedThisSession = AW.exercises
+      .filter(ex => ex.exId !== focusExId)
+      .map(ex => {
+        const done = ex.sets.filter(s => s.done && s.kg > 0 && s.reps > 0);
+        if (!done.length) return null;
+        const top = done.reduce((b, s) =>
+          epley(s.kg, s.reps) > epley(b.kg, b.reps) ? s : b
+        );
+        const vol = done.reduce((sum, s) => sum + s.kg * s.reps, 0);
+        return {
+          name: getExName(ex.exId),
+          setCount: done.length,
+          topSet: top,
+          volume: vol
+        };
+      })
+      .filter(x => x);
+ 
+    if (completedThisSession.length) {
+      lines.push(`CURRENT SESSION (in progress — user is ${minsIn} min into this workout):`);
+      completedThisSession.forEach(c => {
+        lines.push(`  ${c.name}: ${c.setCount} working sets done, top set ${c.topSet.kg}×${c.topSet.reps}${c.topSet.rpe ? '@RPE'+c.topSet.rpe : ''}, volume ${c.volume}`);
+      });
+      lines.push('Account for accumulated fatigue from these completed sets when recommending loads or rep targets.');
+      lines.push('');
+    }
+  }
+ 
+  // Active training plan — included so every AI call has the same north star.
+  if (PLAN && PLAN.active) {
+    const age = planAgeDays();
+    const expired = planIsExpired();
+    lines.push('ACTIVE TRAINING PLAN:');
+    lines.push(`  Goal: ${PLAN.goal}`);
+    lines.push(`  Duration: ${PLAN.durationWeeks} weeks, currently in week ${Math.floor(age/7) + 1}${expired ? ' (PLAN HAS EXPIRED — recommend regeneration)' : ''}`);
+    if (PLAN.priorityLifts && PLAN.priorityLifts.length) {
+      lines.push(`  Priority lifts (push these):`);
+      PLAN.priorityLifts.forEach(p => {
+        lines.push(`    - ${p.exName}: ${p.currentTarget} → ${p.blockTarget}. ${p.progressionRule}`);
+      });
+    }
+    if (PLAN.maintenanceLifts && PLAN.maintenanceLifts.length) {
+      lines.push(`  Maintenance lifts (just keep showing up):`);
+      PLAN.maintenanceLifts.forEach(m => {
+        lines.push(`    - ${m.exName}: ${m.note}`);
+      });
+    }
+    if (PLAN.dropOrReplace && PLAN.dropOrReplace.length) {
+      lines.push(`  Drop or replace:`);
+      PLAN.dropOrReplace.forEach(d => {
+        lines.push(`    - ${d.exName}: ${d.reason}${d.replacement ? '. Replace with: ' + d.replacement : ''}`);
+      });
+    }
+    if (PLAN.structuralChanges && PLAN.structuralChanges.length) {
+      lines.push(`  Structural changes to the split: ${PLAN.structuralChanges.join('; ')}`);
+    }
+    lines.push('');
+    lines.push('Every recommendation must align with this plan unless the user explicitly asks for something off-plan.');
+    lines.push('');
+  }
  
   if (focusExId) {
     const a = analyzeExercise(focusExId);
@@ -3328,12 +3793,19 @@ Step 3 — Apply load progression within the inferred scheme:
   - If recent top-set RPE is 9.5+, suggest the SAME weight. Do not push.
   - If RPE is between 8 and 9.5, suggest the same weight and aim for one more rep.
  
-Step 4 — For barbell compound lifts (squat, bench, deadlift, OHP, barbell row, incline barbell bench), bias TOWARD lower-rep schemes unless the user's history clearly shows hypertrophy reps on that specific lift. For isolation lifts (curls, lateral raises, extensions, cable work, flyes), bias toward higher-rep schemes.
+Step 4 — Adjust for INTRA-SESSION FATIGUE. Check the CURRENT SESSION section of the context.
+  - If the user has already completed working sets on exercises that share the same movement pattern or muscle group, expect 5-10 percent strength loss on this lift.
+    Examples: incline pressing fatigues flat pressing and vice versa. Squats fatigue leg press and lunges. Rows fatigue pulldowns. Overhead pressing fatigues lateral raises (delts already taxed).
+  - If 3+ working sets of a directly related movement have already been completed in this session, lean toward the LOWER end of the inferred rep range OR drop the recommended weight by 5 percent. Explicitly mention the prior exercise in the reason.
+  - If the user is 60+ minutes into the session, factor in general fatigue: lean toward the lower end of the rep range and do not push for PRs.
+  - If no related work has been completed yet this session (or no current session is in progress), ignore this step.
  
-Use specific numbers from the focus exercise context. Reference the user's actual recent sets in the reason. Do not generalize.
+Step 5 — For barbell compound lifts (squat, bench, deadlift, OHP, barbell row, incline barbell bench), bias TOWARD lower-rep schemes unless the user's history clearly shows hypertrophy reps on that specific lift. For isolation lifts (curls, lateral raises, extensions, cable work, flyes), bias toward higher-rep schemes.
  
-Return recommendedWeight (number), targetRepRangeLow and targetRepRangeHigh (integers, reflecting the INFERRED scheme not a default), and a one-sentence reason that names the inferred scheme.`;
+Use specific numbers from the focus exercise context. Reference the user's actual recent sets in the reason. If you adjusted for intra-session fatigue, say so explicitly. Do not generalize.
  
+Return recommendedWeight (number), targetRepRangeLow and targetRepRangeHigh (integers, reflecting the INFERRED scheme not a default), and a one-sentence reason that names the inferred scheme and any fatigue adjustment.`;
+
       callGeminiJSON(prompt, _coachExId, schema).then(data => {
           const reason = stripMarkdown(data.reason || 'Weights suggested.');
           const rangeStr = `${data.targetRepRangeLow}-${data.targetRepRangeHigh}`;
@@ -3387,6 +3859,7 @@ let _chartMode = 'rm'; // 'rm' or 'vol'
 function renderStats() {
   renderStatTiles();
   renderStreaks();
+  renderPlanCard();
   renderAllTimeBests();
   renderHeatmap();
   initChart();
@@ -3606,6 +4079,7 @@ function render1RMChart() {
 ══════════════════════════════════════════════════════════════════ */
 async function boot() {
   loadCFG();
+  PLAN = loadPLAN();
   document.documentElement.setAttribute('data-theme', CFG.theme);
 
   try {
